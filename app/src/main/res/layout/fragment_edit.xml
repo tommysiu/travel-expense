@@ -1,0 +1,61 @@
+<!-- The main content view -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/myToolbar">
+
+    <View
+        android:id="@+id/center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="95dp"
+        android:text="10-Day London Trip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_below="@+id/center"
+        android:layout_centerHorizontal="true" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/space" />
+
+    <Button
+        android:id="@+id/btnInput"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/button_input"
+        android:layout_below="@+id/space"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/btnSummary"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/button_summary"
+        android:layout_below="@+id/btnInput"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/button_submit_cloud"
+        android:layout_below="@+id/btnSummary"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp" />
+
+
+</RelativeLayout>

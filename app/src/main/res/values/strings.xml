@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Travel Expense</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="button_current_trip">Current Trip</string>
+    <string name="button_new_trip">New Trip</string>
+    <string name="button_ok">OK</string>
+    <string name="button_input">Input</string>
+    <string name="button_summary">Summary</string>
+    <string name="button_submit_cloud">Submit to Google Drive</string>
+    <string name="button_input_details">Input Details</string>
+
+    <string-array name="pay_type_array">
+        <item>Cash</item>
+        <item>Visa</item>
+    </string-array>
+
+</resources>
