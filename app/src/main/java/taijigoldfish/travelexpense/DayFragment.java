@@ -1,6 +1,5 @@
 package taijigoldfish.travelexpense;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,62 +8,41 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ControlListener} interface
- * to handle interaction events.
+ * A {@link Fragment} subclass for the main screen.
  * Use the {@link DayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DayFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private ControlListener mListener;
+public class DayFragment extends AbstractFragment {
 
     @BindView(R.id.daySpinner)
     Spinner daySpinner;
+
+    public DayFragment() {
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditFragment.
+     * @param tripJson The trip object in JSON.
+     * @return A new instance of fragment DayFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static DayFragment newInstance(String param1, String param2) {
+    public static DayFragment newInstance(String tripJson) {
         DayFragment fragment = new DayFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public DayFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -74,44 +52,32 @@ public class DayFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
         ButterKnife.bind(this, view);
 
+        this.txtTripTitle.setText(genTripTitle(getTrip()));
+
         // testing data
         ArrayAdapter<CharSequence> adapter =
                 new ArrayAdapter<CharSequence>(this.getActivity(), android.R.layout.simple_spinner_item);
-        adapter.add("11 Aug 2015 (Day 1)");
-        adapter.add("12 Aug 2015 (Day 2)");
-        adapter.add("13 Aug 2015 (Day 3)");
-        adapter.add("14 Aug 2015 (Day 4)");
-        adapter.add("15 Aug 2015 (Day 5)");
-        adapter.add("16 Aug 2015 (Day 6)");
-        adapter.add("17 Aug 2015 (Day 7)");
+
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM yyyy");
+        DateTime startDate = new DateTime(getTrip().getStartDate());
+        DateTime endDate = new DateTime(getTrip().getEndDate());
+        int days = Days.daysBetween(startDate, endDate).getDays() + 1;
+
+        for (int i = 0; i < days; i++) {
+            adapter.add(startDate.plusDays(i).toString(formatter) + " (Day " + (i + 1) + ")");
+        }
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        daySpinner.setAdapter(adapter);
+        this.daySpinner.setAdapter(adapter);
 
         return view;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (ControlListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ControlListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     @OnClick(R.id.btnDetails)
     public void inputDetails() {
-        if(mListener != null) {
-            mListener.onInputDetails();
+        if (this.mListener != null) {
+            this.mListener.onInputDetails();
         }
     }
 }

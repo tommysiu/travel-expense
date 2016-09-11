@@ -1,6 +1,5 @@
 package taijigoldfish.travelexpense;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,54 +10,29 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ControlListener} interface
- * to handle interaction events.
+ * A {@link Fragment} class for the active trip screen.
  * Use the {@link EditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EditFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class EditFragment extends AbstractFragment {
+    private static final String TAG = EditFragment.class.getName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private ControlListener mListener;
+    public EditFragment() {
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param tripJson The trip object in JSON.
      * @return A new instance of fragment EditFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static EditFragment newInstance(String param1, String param2) {
+    public static EditFragment newInstance(String tripJson) {
         EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public EditFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -68,44 +42,29 @@ public class EditFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
         ButterKnife.bind(this, view);
 
+        this.txtTripTitle.setText(genTripTitle(getTrip()));
+
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (ControlListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ControlListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @OnClick(R.id.btnInput)
     public void inputDay() {
-        if(mListener != null) {
-            mListener.onInputDay();
+        if (this.mListener != null) {
+            this.mListener.onInputDay();
         }
     }
 
-    @OnClick (R.id.btnSummary)
+    @OnClick(R.id.btnSummary)
     public void viewSummary() {
-        if(mListener != null) {
-            mListener.onSummary();
+        if (this.mListener != null) {
+            this.mListener.onSummary();
         }
     }
 
-    @OnClick (R.id.btnSubmit)
+    @OnClick(R.id.btnSubmit)
     public void saveToCloud() {
-        if(mListener != null) {
-            mListener.onSaveToCloud();
+        if (this.mListener != null) {
+            this.mListener.onSaveToCloud();
         }
     }
 }
