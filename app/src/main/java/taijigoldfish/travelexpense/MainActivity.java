@@ -146,10 +146,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     }
 
     @Override
-    public void onInputDetails() {
+    public void onInputDetails(int day) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        transaction.replace(R.id.fragment_container, DetailsFragment.newInstance(null, null));
+        transaction.replace(R.id.fragment_container, DetailsFragment.newInstance(
+                this.gson.toJson(this.currentTrip),
+                day
+        ));
         transaction.addToBackStack(null);
 
         transaction.commit();

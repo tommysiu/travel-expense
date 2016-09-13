@@ -2,6 +2,7 @@ package taijigoldfish.travelexpense;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A {@link Fragment} subclass for the main screen.
+ * A {@link Fragment} subclass for the day input screen.
  * Use the {@link DayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class DayFragment extends AbstractFragment {
+    private static final String TAG = DayFragment.class.getName();
 
     @BindView(R.id.daySpinner)
     Spinner daySpinner;
@@ -77,7 +79,10 @@ public class DayFragment extends AbstractFragment {
     @OnClick(R.id.btnDetails)
     public void inputDetails() {
         if (this.mListener != null) {
-            this.mListener.onInputDetails();
+            int pos = (int) this.daySpinner.getSelectedItemId();
+            Log.d(TAG, "Position " + pos + " has been selected");
+
+            this.mListener.onInputDetails(pos);
         }
     }
 }

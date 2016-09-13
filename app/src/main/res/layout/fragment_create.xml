@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/txtTripTitle"
+        android:id="@+id/txtItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtTripTitle"
+        android:layout_below="@+id/txtItemType"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
@@ -70,20 +70,20 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/editDestination"
+        android:id="@+id/editItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/txtTripTitle"
+        android:layout_alignTop="@+id/txtItemType"
         android:layout_marginEnd="24dp"
         android:layout_toEndOf="@+id/center" />
 
     <EditText
-        android:id="@+id/editStartDate"
+        android:id="@+id/editItemDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/editDestination"
+        android:layout_alignStart="@+id/editItemType"
         android:layout_alignTop="@+id/txtStartDate"
         android:layout_marginEnd="24dp"
         android:inputType="date" />
@@ -93,13 +93,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/editStartDate"
+        android:layout_alignStart="@+id/editItemDetails"
         android:layout_alignTop="@+id/txtEndDate"
         android:layout_marginEnd="24dp"
         android:inputType="date" />
 
     <EditText
-        android:id="@+id/editTotalCash"
+        android:id="@+id/editItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -112,7 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/editTotalCash"
+        android:layout_alignStart="@+id/editItemAmount"
         android:layout_alignTop="@+id/txtCurrency"
         android:layout_marginEnd="24dp" />
 

@@ -31,13 +31,13 @@ public class CreateFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    @BindView(R.id.editDestination)
+    @BindView(R.id.editItemType)
     EditText editDestination;
-    @BindView(R.id.editStartDate)
+    @BindView(R.id.editItemDetails)
     EditText editStartDate;
     @BindView(R.id.editEndDate)
     EditText editEndDate;
-    @BindView(R.id.editTotalCash)
+    @BindView(R.id.editItemAmount)
     EditText editTotalCash;
     @BindView(R.id.editCurrency)
     EditText editCurrency;

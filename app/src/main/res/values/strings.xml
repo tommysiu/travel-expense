@@ -2,10 +2,12 @@
     <string name="app_name">Travel Expense</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="action_settings">Settings</string>
 
     <!-- common strings -->
     <string name="button_ok">OK</string>
+    <string name="txt_default_title">Some Trip</string>
 
     <!-- main screen -->
     <string name="button_new_trip">New Trip</string>
@@ -28,13 +30,15 @@
     <string name="button_input_details">Input Details</string>
 
     <!-- details screen -->
-
-
+    <string name="txt_item_title">%1$s Trip (Day %2$d)</string>
+    <string name="txt_item_type">Type</string>
+    <string name="txt_item_details">Details</string>
+    <string name="txt_item_pay_type">Cash/Visa</string>
+    <string name="txt_item_amount">Expense</string>
     <string-array name="pay_type_array">
         <item>Cash</item>
         <item>Visa</item>
     </string-array>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
 

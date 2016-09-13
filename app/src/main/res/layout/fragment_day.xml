@@ -11,20 +11,20 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/txtTripTitle"
+        android:id="@+id/txtItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="95dp"
-        android:text="some trip"
+        android:text="@string/txt_default_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Space
         android:id="@+id/space"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_below="@+id/txtTripTitle"
+        android:layout_below="@+id/txtItemType"
         android:layout_centerHorizontal="true" />
 
     <Spinner

@@ -17,7 +17,7 @@ public interface ControlListener {
 
     void onInputDay();
 
-    void onInputDetails();
+    void onInputDetails(int day);
 
     void onSaveDetails();
 

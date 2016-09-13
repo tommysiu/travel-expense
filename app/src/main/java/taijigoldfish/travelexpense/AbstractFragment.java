@@ -15,11 +15,11 @@ import butterknife.BindView;
 import taijigoldfish.travelexpense.model.Trip;
 
 public class AbstractFragment extends Fragment {
-    protected static final String ARG_TRIP_JSON = "tripJson";
+    protected static final String ARG_TRIP_JSON = "arg_trip_json";
     private static final String TAG = AbstractFragment.class.getName();
     protected ControlListener mListener;
 
-    @BindView(R.id.txtTripTitle)
+    @BindView(R.id.txtItemType)
     TextView txtTripTitle;
 
     private Trip trip;

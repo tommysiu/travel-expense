@@ -1,6 +1,5 @@
 package taijigoldfish.travelexpense;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,58 +11,45 @@ import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import taijigoldfish.travelexpense.model.Trip;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ControlListener} interface
- * to handle interaction events.
+ * A {@link Fragment} subclass for the item details screen.
  * Use the {@link DetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private ControlListener mListener;
-
+public class DetailsFragment extends AbstractFragment {
+    private static final String ARG_DAY_INDEX = "arg_input_day";
     @BindView(R.id.payTypeSpinner)
     Spinner typeSpinner;
+    private int day;
+
+    public DetailsFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param tripJson the trip in JSON format.
+     * @param day the day for details input.
      * @return A new instance of fragment EditFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static DetailsFragment newInstance(String param1, String param2) {
+    public static DetailsFragment newInstance(String tripJson, int day) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
+        args.putInt(ARG_DAY_INDEX, day);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public DetailsFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            this.day = getArguments().getInt(ARG_DAY_INDEX);
         }
     }
 
@@ -80,32 +66,25 @@ public class DetailsFragment extends Fragment {
                         this.getActivity(), R.array.pay_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        typeSpinner.setAdapter(adapter);
+        this.typeSpinner.setAdapter(adapter);
 
         return view;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (ControlListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ControlListener");
+    protected String genTripTitle(Trip trip) {
+        if (trip != null) {
+            return this.getResources().getString(R.string.txt_item_title,
+                    trip.getDestination(), this.day
+            );
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+        return "Unknown trip (Day" + this.day + ")";
     }
 
     @OnClick(R.id.btnSave)
     public void saveDetails() {
-        if (mListener != null) {
-            mListener.onSaveDetails();
+        if (this.mListener != null) {
+            this.mListener.onSaveDetails();
         }
     }
 }

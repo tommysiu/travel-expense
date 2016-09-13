@@ -11,130 +11,118 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/txtTripTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="95dp"
-        android:text="10-Day London Trip"
+        android:text="@string/txt_default_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Space
         android:id="@+id/space"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/txtTripTitle"
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/txtTripTitle"
+        android:id="@+id/txtItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@id/space"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:text="Type"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="36dp"
+        android:text="@string/txt_item_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/txtStartDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtTripTitle"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
+        android:layout_below="@+id/txtItemType"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
-        android:text="Details"
+        android:text="@string/txt_item_details"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/txtEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txtStartDate"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
-        android:text="Cash/Visa"
+        android:text="@string/txt_item_pay_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/txtTotalCash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txtEndDate"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
-        android:text="Expense"
+        android:text="@string/txt_item_amount"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/editDestination"
+        android:id="@+id/editItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/txtTripTitle"
-        android:layout_marginRight="24dp"
-        android:layout_toRightOf="@+id/center"
+        android:layout_alignTop="@+id/txtItemType"
+        android:layout_marginEnd="24dp"
+        android:layout_toEndOf="@+id/center"
         android:inputType="text" />
 
     <EditText
-        android:id="@+id/editStartDate"
+        android:id="@+id/editItemDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editDestination"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/editDestination"
+        android:layout_alignStart="@+id/editItemType"
         android:layout_alignTop="@+id/txtStartDate"
-        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
         android:inputType="text" />
 
     <Spinner
         android:id="@+id/payTypeSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editStartDate"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/editStartDate"
+        android:layout_alignStart="@+id/editItemDetails"
         android:layout_alignTop="@+id/txtEndDate"
         android:layout_below="@id/space"
-        android:layout_marginRight="24dp" />
+        android:layout_marginEnd="24dp" />
 
     <EditText
-        android:id="@+id/editTotalCash"
+        android:id="@+id/editItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/payTypeSpinner"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignStart="@+id/payTypeSpinner"
         android:layout_alignTop="@+id/txtTotalCash"
-        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
         android:inputType="text" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="@dimen/button_width"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTotalCash"
+        android:layout_below="@+id/editItemAmount"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="12dp"
         android:layout_marginTop="48dp"
         android:text="@string/button_ok" />
-
 
 </RelativeLayout>
