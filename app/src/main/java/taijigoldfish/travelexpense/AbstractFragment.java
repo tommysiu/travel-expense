@@ -19,7 +19,7 @@ public class AbstractFragment extends Fragment {
     private static final String TAG = AbstractFragment.class.getName();
     protected ControlListener mListener;
 
-    @BindView(R.id.txtItemType)
+    @BindView(R.id.txtTripTitle)
     TextView txtTripTitle;
 
     private Trip trip;

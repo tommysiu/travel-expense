@@ -33,7 +33,7 @@ public class DetailsFragment extends AbstractFragment {
      * this fragment using the provided parameters.
      *
      * @param tripJson the trip in JSON format.
-     * @param day the day for details input.
+     * @param day      the day for details input.
      * @return A new instance of fragment EditFragment.
      */
     public static DetailsFragment newInstance(String tripJson, int day) {
@@ -60,7 +60,9 @@ public class DetailsFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, view);
 
-        // testing data
+        this.txtTripTitle.setText(genTripTitle(getTrip()));
+
+        // pay type choice
         ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(
                         this.getActivity(), R.array.pay_type_array, android.R.layout.simple_spinner_item);
@@ -75,10 +77,10 @@ public class DetailsFragment extends AbstractFragment {
     protected String genTripTitle(Trip trip) {
         if (trip != null) {
             return this.getResources().getString(R.string.txt_item_title,
-                    trip.getDestination(), this.day
+                    trip.getDestination(), this.day + 1
             );
         }
-        return "Unknown trip (Day" + this.day + ")";
+        return "Unknown trip (Day" + (this.day + 1) + ")";
     }
 
     @OnClick(R.id.btnSave)
