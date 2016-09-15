@@ -1,17 +1,27 @@
 package taijigoldfish.travelexpense.model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Trip {
     private long id;
+
     private String destination;
+
     private Date startDate;
+
     private Date endDate;
+
     private float totalCash;
+
     private String currency;
 
+    private Map<Integer, List<Item>> itemMap = new HashMap<>();
+
     public long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(long id) {
@@ -19,7 +29,7 @@ public class Trip {
     }
 
     public String getDestination() {
-        return destination;
+        return this.destination;
     }
 
     public void setDestination(String destination) {
@@ -27,7 +37,7 @@ public class Trip {
     }
 
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
 
     public void setStartDate(Date startDate) {
@@ -35,7 +45,7 @@ public class Trip {
     }
 
     public Date getEndDate() {
-        return endDate;
+        return this.endDate;
     }
 
     public void setEndDate(Date endDate) {
@@ -43,7 +53,7 @@ public class Trip {
     }
 
     public float getTotalCash() {
-        return totalCash;
+        return this.totalCash;
     }
 
     public void setTotalCash(float totalCash) {
@@ -51,11 +61,19 @@ public class Trip {
     }
 
     public String getCurrency() {
-        return currency;
+        return this.currency;
     }
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Map<Integer, List<Item>> getItemMap() {
+        return this.itemMap;
+    }
+
+    public void setItemMap(Map<Integer, List<Item>> itemMap) {
+        this.itemMap = itemMap;
     }
 
     @Override
@@ -65,37 +83,42 @@ public class Trip {
 
         Trip trip = (Trip) o;
 
-        if (id != trip.id) return false;
-        if (Float.compare(trip.totalCash, totalCash) != 0) return false;
-        if (destination != null ? !destination.equals(trip.destination) : trip.destination != null)
+        if (this.id != trip.id) return false;
+        if (Float.compare(trip.totalCash, this.totalCash) != 0) return false;
+        if (this.destination != null ? !this.destination.equals(trip.destination) : trip.destination != null)
             return false;
-        if (startDate != null ? !startDate.equals(trip.startDate) : trip.startDate != null)
+        if (this.startDate != null ? !this.startDate.equals(trip.startDate) : trip.startDate != null)
             return false;
-        if (endDate != null ? !endDate.equals(trip.endDate) : trip.endDate != null) return false;
-        return currency != null ? currency.equals(trip.currency) : trip.currency == null;
+        if (this.endDate != null ? !this.endDate.equals(trip.endDate) : trip.endDate != null)
+            return false;
+        if (this.currency != null ? !this.currency.equals(trip.currency) : trip.currency != null)
+            return false;
+        return this.itemMap != null ? this.itemMap.equals(trip.itemMap) : trip.itemMap == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (destination != null ? destination.hashCode() : 0);
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-        result = 31 * result + (totalCash != +0.0f ? Float.floatToIntBits(totalCash) : 0);
-        result = 31 * result + (currency != null ? currency.hashCode() : 0);
+        int result = (int) (this.id ^ (this.id >>> 32));
+        result = 31 * result + (this.destination != null ? this.destination.hashCode() : 0);
+        result = 31 * result + (this.startDate != null ? this.startDate.hashCode() : 0);
+        result = 31 * result + (this.endDate != null ? this.endDate.hashCode() : 0);
+        result = 31 * result + (this.totalCash != +0.0f ? Float.floatToIntBits(this.totalCash) : 0);
+        result = 31 * result + (this.currency != null ? this.currency.hashCode() : 0);
+        result = 31 * result + (this.itemMap != null ? this.itemMap.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "Trip{" +
-                "id=" + id +
-                ", destination='" + destination + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", totalCash=" + totalCash +
-                ", currency='" + currency + '\'' +
+                "id=" + this.id +
+                ", destination='" + this.destination + '\'' +
+                ", startDate=" + this.startDate +
+                ", endDate=" + this.endDate +
+                ", totalCash=" + this.totalCash +
+                ", currency='" + this.currency + '\'' +
+                ", itemMap=" + this.itemMap +
                 '}';
     }
 }

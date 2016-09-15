@@ -35,6 +35,7 @@
         android:layout_below="@id/space"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
+        android:labelFor="@id/editItemType"
         android:text="@string/txt_item_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -47,6 +48,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
+        android:labelFor="@id/editItemDetails"
         android:text="@string/txt_item_details"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -59,6 +61,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
+        android:labelFor="@id/editItemType"
         android:text="@string/txt_item_pay_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -71,6 +74,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
+        android:labelFor="@id/editItemAmount"
         android:text="@string/txt_item_amount"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

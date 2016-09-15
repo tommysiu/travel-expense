@@ -1,5 +1,6 @@
 package taijigoldfish.travelexpense;
 
+import taijigoldfish.travelexpense.model.Item;
 import taijigoldfish.travelexpense.model.Trip;
 
 /**
@@ -19,7 +20,7 @@ public interface ControlListener {
 
     void onInputDetails(int day);
 
-    void onSaveDetails();
+    void onSaveDetails(Item item);
 
     void onSummary();
 

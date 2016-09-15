@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import taijigoldfish.travelexpense.model.Item;
 import taijigoldfish.travelexpense.model.Trip;
 
 /**
@@ -20,8 +22,19 @@ import taijigoldfish.travelexpense.model.Trip;
  */
 public class DetailsFragment extends AbstractFragment {
     private static final String ARG_DAY_INDEX = "arg_input_day";
+
+    @BindView(R.id.editItemType)
+    EditText editItemType;
+
+    @BindView(R.id.editItemDetails)
+    EditText editItemDetails;
+
     @BindView(R.id.payTypeSpinner)
     Spinner typeSpinner;
+
+    @BindView(R.id.editItemAmount)
+    EditText editItemAmount;
+
     private int day;
 
     public DetailsFragment() {
@@ -86,7 +99,16 @@ public class DetailsFragment extends AbstractFragment {
     @OnClick(R.id.btnSave)
     public void saveDetails() {
         if (this.mListener != null) {
-            this.mListener.onSaveDetails();
+
+            Item item = new Item();
+            item.setTripId(getTrip().getId());
+            item.setDay(this.day);
+            item.setType(this.editItemType.getText().toString());
+            item.setDetails(this.editItemDetails.getText().toString());
+            item.setPayType(this.typeSpinner.getSelectedItem().toString());
+            item.setAmount(Float.parseFloat(this.editItemAmount.getText().toString()));
+
+            this.mListener.onSaveDetails(item);
         }
     }
 }

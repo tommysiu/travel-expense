@@ -12,14 +12,19 @@ import android.view.MenuItem;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import taijigoldfish.travelexpense.model.Item;
 import taijigoldfish.travelexpense.model.Trip;
 
 
 public class MainActivity extends AppCompatActivity implements ControlListener {
     private static final String KEY_TRIP_ID = "key_trip_id";
     private static String TAG = MainActivity.class.getSimpleName();
+
     @BindView(R.id.myToolbar)
     Toolbar mToolbar;
 
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     public void onShowCreateScreen() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        transaction.replace(R.id.fragment_container, CreateFragment.newInstance(null, null));
+        transaction.replace(R.id.fragment_container, CreateFragment.newInstance());
         transaction.addToBackStack(null);
 
         transaction.commit();
@@ -159,8 +164,15 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     }
 
     @Override
-    public void onSaveDetails() {
-        // Save day details, back to previous fragment
+    public void onSaveDetails(Item item) {
+        // Save item details, back to previous fragment
+        this.dbHelper.saveItem(this.currentTripId, item);
+        List<Item> itemList = this.currentTrip.getItemMap().get(item.getDay());
+        if (itemList == null) {
+            itemList = new ArrayList<>();
+            this.currentTrip.getItemMap().put(item.getDay(), itemList);
+        }
+        itemList.add(item);
         getSupportFragmentManager().popBackStack();
     }
 

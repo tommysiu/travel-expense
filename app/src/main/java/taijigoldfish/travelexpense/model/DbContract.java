@@ -7,8 +7,6 @@ public final class DbContract {
     private DbContract() {
     }
 
-    ;
-
     public static class TripEntry implements BaseColumns {
         public static final String TABLE_NAME = "trip";
         public static final String COLUMN_NAME_DESTINATION = "name";
@@ -18,4 +16,13 @@ public final class DbContract {
         public static final String COLUMN_NAME_CURRENCY = "currency";
     }
 
+    public static class ItemEntry implements BaseColumns {
+        public static final String TABLE_NAME = "item";
+        public static final String COLUMN_NAME_TRIP_ID = "tripId";
+        public static final String COLUMN_NAME_DAY = "day";
+        public static final String COLUMN_NAME_TYPE = "itemType";
+        public static final String COLUMN_NAME_DETAILS = "details";
+        public static final String COLUMN_NAME_PAY_TYPE = "payType";
+        public static final String COLUMN_NAME_AMOUNT = "amount";
+    }
 }
