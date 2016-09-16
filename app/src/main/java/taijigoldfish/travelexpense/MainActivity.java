@@ -22,9 +22,9 @@ import taijigoldfish.travelexpense.model.Trip;
 
 
 public class MainActivity extends AppCompatActivity implements ControlListener {
+    private static final String KEY_SCREEN = "key_screen";
     private static final String KEY_TRIP_ID = "key_trip_id";
     private static String TAG = MainActivity.class.getSimpleName();
-
     @BindView(R.id.myToolbar)
     Toolbar mToolbar;
 
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     private Gson gson = new Gson();
 
     private long currentTripId = -1;
-
     private Trip currentTrip;
 
     @Override
@@ -56,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, MainFragment.newInstance()).commit();
+                .add(R.id.fragment_container, MainFragment.newInstance())
+                .commit();
     }
 
     @Override
@@ -86,12 +86,11 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     @Override
     public void onShowCreateScreen() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.fragment_container, CreateFragment.newInstance());
-        transaction.addToBackStack(null);
-
-        transaction.commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, CreateFragment.newInstance())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -103,14 +102,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             setCurrentTrip(trip);
             Log.v(TAG, trip.toString());
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.fragment_container, EditFragment.newInstance(
-                    this.gson.toJson(trip)
-            ));
-            transaction.addToBackStack(null);
-
-            transaction.commit();
+            getSupportFragmentManager().popBackStack();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, EditFragment.newInstance(
+                            this.gson.toJson(trip)
+                    ))
+                    .addToBackStack(null)
+                    .commit();
         } else {
             showErrorDialog("Fail to create trip");
         }
@@ -180,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     public void onSummary() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        transaction.replace(R.id.fragment_container, SummaryFragment.newInstance(null, null));
+        transaction.replace(R.id.fragment_container, SummaryFragment.newInstance(
+                this.gson.toJson(this.currentTrip)));
         transaction.addToBackStack(null);
 
         transaction.commit();
@@ -205,5 +204,4 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
     }
-
 }

@@ -56,9 +56,9 @@ public class DayFragment extends AbstractFragment {
 
         this.txtTripTitle.setText(genTripTitle(getTrip()));
 
-        // testing data
+        // populate the day spinner
         ArrayAdapter<CharSequence> adapter =
-                new ArrayAdapter<CharSequence>(this.getActivity(), android.R.layout.simple_spinner_item);
+                new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item);
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM yyyy");
         DateTime startDate = new DateTime(getTrip().getStartDate());
