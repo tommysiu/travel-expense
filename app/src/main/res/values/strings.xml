@@ -40,6 +40,9 @@
         <item>Visa</item>
     </string-array>
 
+    <!-- summary screen -->
+    <string name="txt_amount">%1$.2f (%2$s)</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

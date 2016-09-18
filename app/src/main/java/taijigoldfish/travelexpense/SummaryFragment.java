@@ -143,7 +143,7 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
         if (list == null) {
             list = new ArrayList<>();
         }
-        SummaryItemAdapter adapter = new SummaryItemAdapter(getContext(), list);
+        SummaryItemAdapter adapter = new SummaryItemAdapter(getContext(), getTrip(), list);
         this.listView.setAdapter(adapter);
     }
 

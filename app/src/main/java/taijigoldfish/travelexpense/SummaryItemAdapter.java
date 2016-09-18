@@ -11,9 +11,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import taijigoldfish.travelexpense.model.Trip;
+
 public class SummaryItemAdapter extends ArrayAdapter<SummaryFragment.Summary> {
-    public SummaryItemAdapter(Context context, List<SummaryFragment.Summary> objects) {
+    private Trip trip;
+
+    public SummaryItemAdapter(Context context, Trip trip, List<SummaryFragment.Summary> objects) {
         super(context, 0, objects);
+        this.trip = trip;
     }
 
     @Override
@@ -26,15 +31,19 @@ public class SummaryItemAdapter extends ArrayAdapter<SummaryFragment.Summary> {
         TextView itemType = (TextView) convertView.findViewById(R.id.txtItemDesc);
         TextView itemAmount = (TextView) convertView.findViewById(R.id.txtItemAmount);
         itemType.setText(summary.getTitle());
-        itemAmount.setText(Float.toString(summary.getAmount()));
+        itemAmount.setText(getContext().getResources()
+                .getString(R.string.txt_amount, summary.getAmount(), this.trip.getCurrency()));
 
+        int color = Color.BLACK;
+        int typeface = Typeface.NORMAL;
         if (position >= this.getCount() - 4) {
-            itemType.setTypeface(null, Typeface.BOLD);
-            itemType.setTextColor(Color.BLUE);
-        } else {
-            itemType.setTypeface(null, Typeface.NORMAL);
-            itemType.setTextColor(Color.BLACK);
+            color = Color.BLUE;
+            typeface = Typeface.BOLD;
         }
+        itemType.setTextColor(color);
+        itemType.setTypeface(null, typeface);
+        itemAmount.setTextColor(color);
+        itemAmount.setTypeface(null, typeface);
 
         return convertView;
     }
