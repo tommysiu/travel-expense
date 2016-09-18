@@ -42,7 +42,7 @@ public class EditFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
         ButterKnife.bind(this, view);
 
-        this.txtTripTitle.setText(genTripTitle(getTrip()));
+        this.txtTripTitle.setText(getTripTitle());
 
         return view;
     }

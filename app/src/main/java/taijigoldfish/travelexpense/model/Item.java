@@ -1,6 +1,10 @@
 package taijigoldfish.travelexpense.model;
 
 public class Item {
+
+    public static final String PAY_TYPE_CASH = "Cash";
+    public static final String PAY_TYPE_VISA = "Visa";
+
     private long id;
     private long tripId;
     private int day;

@@ -1,9 +1,9 @@
 package taijigoldfish.travelexpense.model;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Trip {
     private long id;
@@ -18,7 +18,7 @@ public class Trip {
 
     private String currency;
 
-    private Map<Integer, List<Item>> itemMap = new HashMap<>();
+    private Map<Integer, List<Item>> itemMap = new TreeMap<>();
 
     public long getId() {
         return this.id;

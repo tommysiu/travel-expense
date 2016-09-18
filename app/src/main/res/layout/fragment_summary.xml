@@ -7,8 +7,7 @@
     <View
         android:id="@+id/center"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_toRightOf="@+id/lblCashSpent" />
+        android:layout_height="0dp" />
 
     <TextView
         android:id="@+id/txtTripTitle"
@@ -17,7 +16,7 @@
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="95dp"
-        android:text="10-Day London Trip"
+        android:text="@string/txt_trip_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Space
@@ -33,212 +32,14 @@
         android:layout_below="@id/space"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/lblFood"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/daySpinner"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="0dp"
-        android:text="Food"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtStartDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/lblFood"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="0dp"
-        android:text="Transport"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtEndDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtStartDate"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="0dp"
-        android:text="Entrance Fee"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtTotalCash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtEndDate"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="0dp"
-        android:text="Souvenir"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtCurrency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtTotalCash"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="0dp"
-        android:text="Additional"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/lblCashSpent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtCurrency"
-        android:layout_alignStart="@+id/txtCurrency"
-        android:layout_below="@+id/txtCurrency"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:text="Total cash spent"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/lblCashSpent"
-        android:layout_alignStart="@+id/lblCashSpent"
-        android:layout_below="@+id/lblCashSpent"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:text="Total visa spent"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView7"
-        android:layout_alignStart="@+id/textView7"
-        android:layout_below="@+id/textView7"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:text="Total spent"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView8"
-        android:layout_alignStart="@+id/textView8"
-        android:layout_below="@+id/textView8"
-        android:text="Cash left"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtFood"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/center"
         android:layout_below="@+id/daySpinner"
-        android:layout_marginLeft="24dp"
-        android:layout_toEndOf="@+id/lblFood"
-        android:layout_toRightOf="@+id/lblFood"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/summary_horizontal_margin"
+        android:layout_marginRight="@dimen/summary_horizontal_margin" />
 
-    <TextView
-        android:id="@+id/txtTransport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtStartDate"
-        android:layout_alignLeft="@+id/txtFood"
-        android:layout_alignStart="@+id/txtFood"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtEntFee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtTransport"
-        android:layout_alignStart="@+id/txtTransport"
-        android:layout_alignTop="@+id/txtEndDate"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtSouvenir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtEntFee"
-        android:layout_alignStart="@+id/txtEntFee"
-        android:layout_below="@+id/txtEntFee"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtAdditional"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/lblCashSpent"
-        android:layout_alignLeft="@+id/txtSouvenir"
-        android:layout_alignStart="@+id/txtSouvenir"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtCashSpent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView7"
-        android:layout_alignLeft="@+id/txtAdditional"
-        android:layout_alignStart="@+id/txtAdditional"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtVisaSpent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView7"
-        android:layout_alignLeft="@+id/txtCashSpent"
-        android:layout_alignStart="@+id/txtCashSpent"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtTotalSpent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView8"
-        android:layout_alignLeft="@+id/txtVisaSpent"
-        android:layout_alignStart="@+id/txtVisaSpent"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/txtCashLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView9"
-        android:layout_alignLeft="@+id/txtTotalSpent"
-        android:layout_alignStart="@+id/txtTotalSpent"
-        android:text="xxx"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

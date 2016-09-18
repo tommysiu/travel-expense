@@ -73,7 +73,7 @@ public class DetailsFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, view);
 
-        this.txtTripTitle.setText(genTripTitle(getTrip()));
+        this.txtTripTitle.setText(getTripTitle());
 
         // pay type choice
         ArrayAdapter<CharSequence> adapter =
@@ -105,7 +105,12 @@ public class DetailsFragment extends AbstractFragment {
             item.setDay(this.day);
             item.setType(this.editItemType.getText().toString());
             item.setDetails(this.editItemDetails.getText().toString());
-            item.setPayType(this.typeSpinner.getSelectedItem().toString());
+
+            if (this.typeSpinner.getSelectedItemPosition() == 0) {
+                item.setPayType(Item.PAY_TYPE_CASH);
+            } else {
+                item.setPayType(Item.PAY_TYPE_VISA);
+            }
             item.setAmount(Float.parseFloat(this.editItemAmount.getText().toString()));
 
             this.mListener.onSaveDetails(item);

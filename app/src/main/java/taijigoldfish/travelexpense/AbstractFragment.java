@@ -10,6 +10,11 @@ import com.google.gson.Gson;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import taijigoldfish.travelexpense.model.Trip;
@@ -24,6 +29,10 @@ public class AbstractFragment extends Fragment {
 
     private Trip trip;
 
+    private String tripTitle;
+
+    private List<String> dateStrings;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +40,8 @@ public class AbstractFragment extends Fragment {
             String json = getArguments().getString(ARG_TRIP_JSON);
             Log.d(TAG, "Json = " + json);
             setTrip(new Gson().fromJson(json, Trip.class));
+            this.tripTitle = genTripTitle(this.trip);
+            this.dateStrings = genDateStrings(this.trip);
         }
     }
 
@@ -42,6 +53,14 @@ public class AbstractFragment extends Fragment {
         this.trip = trip;
     }
 
+    public String getTripTitle() {
+        return this.tripTitle;
+    }
+
+    public List<String> getDateStrings() {
+        return this.dateStrings;
+    }
+
     protected String genTripTitle(Trip trip) {
         if (trip != null) {
             DateTime startDate = new DateTime(trip.getStartDate());
@@ -51,8 +70,20 @@ public class AbstractFragment extends Fragment {
             return this.getResources().getString(R.string.txt_trip_title, days,
                     trip.getDestination());
         }
-
         return "Unknown trip";
+    }
+
+    protected List<String> genDateStrings(Trip trip) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM yyyy");
+        List<String> result = new ArrayList<>();
+        DateTime startDate = new DateTime(getTrip().getStartDate());
+        DateTime endDate = new DateTime(getTrip().getEndDate());
+        int days = Days.daysBetween(startDate, endDate).getDays() + 1;
+
+        for (int i = 0; i < days; i++) {
+            result.add(startDate.plusDays(i).toString(formatter) + " (Day " + (i + 1) + ")");
+        }
+        return result;
     }
 
     @Override

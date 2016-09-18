@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="0dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="12dp"
+    android:paddingTop="0dp">
+
+    <TextView
+        android:id="@+id/txtItemDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_vertical|start"
+        android:layout_marginEnd="8dp"
+        android:text="Food" />
+
+    <TextView
+        android:id="@+id/txtItemAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical|end"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="0dp"
+        android:text="120.0" />
+
+</RelativeLayout>

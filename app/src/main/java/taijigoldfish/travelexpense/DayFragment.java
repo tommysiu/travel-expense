@@ -9,11 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -54,21 +49,14 @@ public class DayFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
         ButterKnife.bind(this, view);
 
-        this.txtTripTitle.setText(genTripTitle(getTrip()));
+        this.txtTripTitle.setText(getTripTitle());
 
         // populate the day spinner
         ArrayAdapter<CharSequence> adapter =
                 new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item);
-
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM yyyy");
-        DateTime startDate = new DateTime(getTrip().getStartDate());
-        DateTime endDate = new DateTime(getTrip().getEndDate());
-        int days = Days.daysBetween(startDate, endDate).getDays() + 1;
-
-        for (int i = 0; i < days; i++) {
-            adapter.add(startDate.plusDays(i).toString(formatter) + " (Day " + (i + 1) + ")");
+        for (String s : getDateStrings()) {
+            adapter.add(s);
         }
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         this.daySpinner.setAdapter(adapter);

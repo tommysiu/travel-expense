@@ -22,7 +22,6 @@ import taijigoldfish.travelexpense.model.Trip;
 
 
 public class MainActivity extends AppCompatActivity implements ControlListener {
-    private static final String KEY_SCREEN = "key_screen";
     private static final String KEY_TRIP_ID = "key_trip_id";
     private static String TAG = MainActivity.class.getSimpleName();
     @BindView(R.id.myToolbar)
