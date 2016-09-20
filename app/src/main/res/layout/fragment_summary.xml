@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/daySpinner"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/summary_list_bottom_margin"
         android:layout_marginLeft="@dimen/summary_horizontal_margin"
         android:layout_marginRight="@dimen/summary_horizontal_margin" />
 

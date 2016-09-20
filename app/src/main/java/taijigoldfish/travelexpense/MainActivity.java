@@ -2,7 +2,10 @@ package taijigoldfish.travelexpense;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -21,9 +28,11 @@ import taijigoldfish.travelexpense.model.Item;
 import taijigoldfish.travelexpense.model.Trip;
 
 
-public class MainActivity extends AppCompatActivity implements ControlListener {
+public class MainActivity extends AppCompatActivity implements ControlListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    protected static final int RESOLVE_CONNECTION_REQUEST_CODE = 1;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_TRIP_ID = "key_trip_id";
-    private static String TAG = MainActivity.class.getSimpleName();
     @BindView(R.id.myToolbar)
     Toolbar mToolbar;
 
@@ -33,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     private long currentTripId = -1;
     private Trip currentTrip;
+
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +197,16 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     @Override
     public void onSaveToCloud() {
+        if (this.googleApiClient == null || (!this.googleApiClient.isConnected() &&
+                !this.googleApiClient.isConnecting())) {
+            this.googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            this.googleApiClient.connect();
+        }
 
     }
 
@@ -202,5 +223,40 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         new AlertDialog.Builder(this).setTitle("Error").setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+            case RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    this.googleApiClient.connect();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "GoogleApiClient onConnected");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "GoogleApiClient onConnectionSuspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "GoogleApiClient onConnectionFailed");
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                // Unable to resolve, message user appropriately
+            }
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+        }
     }
 }
