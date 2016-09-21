@@ -14,7 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.gson.Gson;
@@ -227,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.i(TAG, "OnActivityResult=" + requestCode + ", resultCode=" + resultCode);
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -238,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "GoogleApiClient onConnected");
+        Log.i(TAG, "API client connected.");
     }
 
     @Override
@@ -247,16 +248,18 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "GoogleApiClient onConnectionFailed");
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
-            } catch (IntentSender.SendIntentException e) {
-                // Unable to resolve, message user appropriately
-            }
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        // Called whenever the API client fails to connect.
+        Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(this, result.getErrorCode(), 0).show();
+            return;
+        }
+        try {
+            result.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Exception while starting resolution activity", e);
         }
     }
 }
