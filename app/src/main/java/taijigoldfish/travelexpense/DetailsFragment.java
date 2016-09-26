@@ -21,6 +21,8 @@ import taijigoldfish.travelexpense.model.Trip;
  * create an instance of this fragment.
  */
 public class DetailsFragment extends AbstractFragment {
+    private static final String TAG = DetailsFragment.class.getName();
+
     private static final String ARG_DAY_INDEX = "arg_input_day";
 
     @BindView(R.id.editItemType)
@@ -73,7 +75,7 @@ public class DetailsFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, view);
 
-        this.txtTripTitle.setText(getTripTitle());
+        this.txtTripTitle.setText(genTripTitle(getTrip()));
 
         // pay type choice
         ArrayAdapter<CharSequence> adapter =

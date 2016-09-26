@@ -8,12 +8,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,7 +35,7 @@ public class AbstractFragment extends Fragment {
             Log.d(TAG, "Json = " + json);
             setTrip(new Gson().fromJson(json, Trip.class));
             this.tripTitle = genTripTitle(this.trip);
-            this.dateStrings = genDateStrings(this.trip);
+            this.dateStrings = Utils.genDateStrings(this.trip);
         }
     }
 
@@ -61,29 +55,8 @@ public class AbstractFragment extends Fragment {
         return this.dateStrings;
     }
 
-    protected String genTripTitle(Trip trip) {
-        if (trip != null) {
-            DateTime startDate = new DateTime(trip.getStartDate());
-            DateTime endDate = new DateTime(trip.getEndDate());
-            int days = Days.daysBetween(startDate, endDate).getDays() + 1;
-
-            return this.getResources().getString(R.string.txt_trip_title, days,
-                    trip.getDestination());
-        }
-        return "Unknown trip";
-    }
-
-    protected List<String> genDateStrings(Trip trip) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMM yyyy");
-        List<String> result = new ArrayList<>();
-        DateTime startDate = new DateTime(getTrip().getStartDate());
-        DateTime endDate = new DateTime(getTrip().getEndDate());
-        int days = Days.daysBetween(startDate, endDate).getDays() + 1;
-
-        for (int i = 0; i < days; i++) {
-            result.add(startDate.plusDays(i).toString(formatter) + " (Day " + (i + 1) + ")");
-        }
-        return result;
+    protected String genTripTitle(final Trip trip) {
+        return Utils.getTripTitle(this.getContext(), trip);
     }
 
     @Override

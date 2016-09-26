@@ -16,9 +16,16 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +37,10 @@ import taijigoldfish.travelexpense.model.Trip;
 
 public class MainActivity extends AppCompatActivity implements ControlListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
     protected static final int RESOLVE_CONNECTION_REQUEST_CODE = 1;
+    protected static final int DRIVE_CREATOR_REQUEST_CODE = 2;
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_TRIP_ID = "key_trip_id";
     @BindView(R.id.myToolbar)
@@ -44,6 +54,39 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     private Trip currentTrip;
 
     private GoogleApiClient googleApiClient;
+    final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(DriveApi.DriveContentsResult result) {
+                    MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                            .setMimeType("application/vnd.ms-excel")
+                            .setTitle(Utils.getTripTitle(getApplicationContext(), getCurrentTrip()))
+                            .build();
+
+                    OutputStream outputStream = result.getDriveContents().getOutputStream();
+                    ExcelFile excelFile = new ExcelFile(outputStream);
+                    excelFile.write(getCurrentTrip());
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    IntentSender intentSender = Drive.DriveApi
+                            .newCreateFileActivityBuilder()
+                            .setInitialMetadata(metadataChangeSet)
+                            .setInitialDriveContents(result.getDriveContents())
+                            .build(getGoogleApiClient());
+                    try {
+                        startIntentSenderForResult(intentSender, DRIVE_CREATOR_REQUEST_CODE, null, 0, 0, 0);
+                    } catch (IntentSender.SendIntentException e) {
+                        // Handle the exception
+                        e.printStackTrace();
+                    }
+                }
+            };
+    private ExportDriveState exportState = ExportDriveState.NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,9 +184,21 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         }
     }
 
+    public Trip getCurrentTrip() {
+        return this.currentTrip;
+    }
+
     private void setCurrentTrip(Trip trip) {
         this.currentTrip = trip;
         this.currentTripId = trip.getId();
+    }
+
+    public GoogleApiClient getGoogleApiClient() {
+        return this.googleApiClient;
+    }
+
+    public void setGoogleApiClient(GoogleApiClient googleApiClient) {
+        this.googleApiClient = googleApiClient;
     }
 
     @Override
@@ -197,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onSaveToCloud() {
+        this.exportState = ExportDriveState.INITIATED;
         if (this.googleApiClient == null || (!this.googleApiClient.isConnected() &&
                 !this.googleApiClient.isConnecting())) {
             this.googleApiClient = new GoogleApiClient.Builder(this)
@@ -206,8 +262,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     .addOnConnectionFailedListener(this)
                     .build();
             this.googleApiClient.connect();
+        } else if (this.googleApiClient.isConnected()) {
+            Drive.DriveApi.newDriveContents(getGoogleApiClient())
+                    .setResultCallback(this.driveContentsCallback);
         }
-
     }
 
     @Override
@@ -234,12 +292,24 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     this.googleApiClient.connect();
                 }
                 break;
+            case DRIVE_CREATOR_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    Log.d(TAG, "DriveId of created file = " + driveId);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(TAG, "API client connected.");
+        Drive.DriveApi.newDriveContents(getGoogleApiClient())
+                .setResultCallback(this.driveContentsCallback);
     }
 
     @Override
@@ -261,5 +331,9 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         } catch (IntentSender.SendIntentException e) {
             Log.e(TAG, "Exception while starting resolution activity", e);
         }
+    }
+
+    private enum ExportDriveState {
+        NONE, INITIATED, EXPORTED
     }
 }

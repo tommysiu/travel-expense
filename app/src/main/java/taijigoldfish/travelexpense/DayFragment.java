@@ -67,7 +67,7 @@ public class DayFragment extends AbstractFragment {
     @OnClick(R.id.btnDetails)
     public void inputDetails() {
         if (this.mListener != null) {
-            int pos = (int) this.daySpinner.getSelectedItemId();
+            int pos = this.daySpinner.getSelectedItemPosition();
             Log.d(TAG, "Position " + pos + " has been selected");
 
             this.mListener.onInputDetails(pos);
