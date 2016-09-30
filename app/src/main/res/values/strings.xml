@@ -8,6 +8,12 @@
     <!-- common strings -->
     <string name="button_ok">OK</string>
     <string name="txt_default_title">Some Trip</string>
+    <string name="error_create_trip">Fail to create trip record</string>
+    <string name="error_no_network">No network connection available</string>
+    <string name="error_no_google_play">This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.</string>
+    <string name="error_save_google_drive">Fail to save to Google Drive</string>
+    <string name="error_save_cancelled">Request cancelled</string>
+    <string name="msg_google_sheet_saved">Trip has been exported to Google Drive successfully</string>
 
     <!-- main screen -->
     <string name="button_new_trip">New Trip</string>
