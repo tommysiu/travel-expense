@@ -249,10 +249,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onSaveToCloud() {
-        getResultsFromApi();
+        exportGoogleSheet();
     }
 
-    private void getResultsFromApi() {
+    private void exportGoogleSheet() {
         if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (this.googleAccountCredential.getSelectedAccount() == null) {
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         } else if (!isDeviceOnline()) {
             showErrorDialog(getResources().getString(R.string.error_no_network));
         } else {
-            new MakeRequestTask(this.googleAccountCredential).execute();
+            new CreateSheetRequestTask(this.googleAccountCredential).execute();
         }
     }
 
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     .getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 this.googleAccountCredential.setSelectedAccountName(accountName);
-                getResultsFromApi();
+                exportGoogleSheet();
             } else {
                 startActivityForResult(
                         this.googleAccountCredential.newChooseAccountIntent(),
@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                 if (resultCode != RESULT_OK) {
                     showErrorDialog(getResources().getString(R.string.error_no_google_play));
                 } else {
-                    getResultsFromApi();
+                    exportGoogleSheet();
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -356,13 +356,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         this.googleAccountCredential.setSelectedAccountName(accountName);
-                        getResultsFromApi();
+                        exportGoogleSheet();
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    getResultsFromApi();
+                    exportGoogleSheet();
                 }
                 break;
             default:
@@ -387,11 +387,11 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         // Do nothing
     }
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+    private class CreateSheetRequestTask extends AsyncTask<Void, Void, List<String>> {
         private Sheets service = null;
         private Exception lastError = null;
 
-        MakeRequestTask(GoogleAccountCredential credential) {
+        CreateSheetRequestTask(GoogleAccountCredential credential) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             this.service = new Sheets.Builder(transport, jsonFactory, credential)
