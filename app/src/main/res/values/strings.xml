@@ -41,6 +41,14 @@
     <string name="txt_item_details">Details</string>
     <string name="txt_item_pay_type">Cash/Visa</string>
     <string name="txt_item_amount">Expense</string>
+    <string-array name="item_type_array">
+        <item>Souvenir</item>
+        <item>Entrance</item>
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Planned</item>
+        <item>Unplanned</item>
+    </string-array>
     <string-array name="pay_type_array">
         <item>Cash</item>
         <item>Visa</item>
@@ -60,7 +68,7 @@
     </string>
 
     <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <string name="pref_default_display_name">Default</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">

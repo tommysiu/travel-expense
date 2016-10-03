@@ -27,20 +27,30 @@
         android:layout_below="@+id/txtTripTitle"
         android:layout_centerHorizontal="true" />
 
+    <Spinner
+        android:id="@+id/daySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/space"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:textAlignment="center"/>
+
     <TextView
         android:id="@+id/txtItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/space"
+        android:layout_below="@id/daySpinner"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
-        android:labelFor="@id/editItemType"
         android:text="@string/txt_item_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/txtStartDate"
+        android:id="@+id/txtItemDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -53,31 +63,28 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/txtEndDate"
+        android:id="@+id/txtPayType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtStartDate"
+        android:layout_below="@+id/txtItemDesc"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
-        android:labelFor="@id/editItemType"
         android:text="@string/txt_item_pay_type"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <TextView
-        android:id="@+id/txtTotalCash"
+        android:id="@+id/txtItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtEndDate"
+        android:layout_below="@+id/txtPayType"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
         android:labelFor="@id/editItemAmount"
         android:text="@string/txt_item_amount"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <EditText
         android:id="@+id/editItemType"
         android:layout_width="wrap_content"
@@ -88,36 +95,42 @@
         android:layout_toEndOf="@+id/center"
         android:inputType="text" />
 
+    <Spinner
+        android:id="@+id/itemTypeSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/txtItemType"
+        android:layout_below="@id/space"
+        android:layout_marginEnd="24dp"
+        android:layout_toEndOf="@+id/center"/>
     <EditText
         android:id="@+id/editItemDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/editItemType"
-        android:layout_alignTop="@+id/txtStartDate"
+        android:layout_alignStart="@+id/itemTypeSpinner"
+        android:layout_alignTop="@+id/txtItemDesc"
         android:layout_marginEnd="24dp"
         android:inputType="text" />
-
     <Spinner
         android:id="@+id/payTypeSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/editItemDetails"
-        android:layout_alignTop="@+id/txtEndDate"
+        android:layout_alignTop="@+id/txtPayType"
         android:layout_below="@id/space"
         android:layout_marginEnd="24dp" />
-
     <EditText
         android:id="@+id/editItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/payTypeSpinner"
-        android:layout_alignTop="@+id/txtTotalCash"
+        android:layout_alignTop="@+id/txtItemAmount"
         android:layout_marginEnd="24dp"
         android:inputType="text" />
-
     <Button
         android:id="@+id/btnSave"
         android:layout_width="@dimen/button_width"

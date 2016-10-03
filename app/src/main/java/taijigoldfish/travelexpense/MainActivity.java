@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent();
             intent.setClass(this, SettingsActivity.class);
@@ -158,7 +157,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         if (id != -1) {
             trip.setId(id);
             setCurrentTrip(trip);
-            Log.v(TAG, trip.toString());
+
+            Utils.setPreferredDay(this, 0);
 
             getSupportFragmentManager().popBackStack();
             getSupportFragmentManager().beginTransaction()
@@ -199,24 +199,11 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     }
 
     @Override
-    public void onInputDay() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.fragment_container, DayFragment.newInstance(
-                this.gson.toJson(this.currentTrip)
-        ));
-        transaction.addToBackStack(null);
-
-        transaction.commit();
-    }
-
-    @Override
-    public void onInputDetails(int day) {
+    public void onInputDetails() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, DetailsFragment.newInstance(
-                this.gson.toJson(this.currentTrip),
-                day
+                this.gson.toJson(this.currentTrip)
         ));
         transaction.addToBackStack(null);
 
@@ -227,6 +214,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     public void onSaveDetails(Item item) {
         // Save item details, back to previous fragment
         this.dbHelper.saveItem(this.currentTripId, item);
+
+        // update last selected day if necessary
+        int lastSelectedDay = Utils.getPreferredDay(this);
+        if (item.getDay() != lastSelectedDay) {
+            Utils.setPreferredDay(this, item.getDay());
+        }
+
         List<Item> itemList = this.currentTrip.getItemMap().get(item.getDay());
         if (itemList == null) {
             itemList = new ArrayList<>();

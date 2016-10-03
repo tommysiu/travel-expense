@@ -1,6 +1,8 @@
 package taijigoldfish.travelexpense;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -13,6 +15,7 @@ import java.util.List;
 import taijigoldfish.travelexpense.model.Trip;
 
 public final class Utils {
+    private static final String PREF_ACTIVE_DAY = "activeDay";
 
     public static String getTripTitle(final Context context, final Trip trip) {
         if (trip != null) {
@@ -37,5 +40,15 @@ public final class Utils {
             result.add(startDate.plusDays(i).toString(formatter) + " (Day " + (i + 1) + ")");
         }
         return result;
+    }
+
+    public static int getPreferredDay(Activity activity) {
+        return activity.getPreferences(Context.MODE_PRIVATE).getInt(PREF_ACTIVE_DAY, 0);
+    }
+
+    public static void setPreferredDay(Activity activity, int day) {
+        SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
+        editor.putInt(PREF_ACTIVE_DAY, day);
+        editor.apply();
     }
 }

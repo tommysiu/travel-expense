@@ -13,7 +13,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taijigoldfish.travelexpense.model.Item;
-import taijigoldfish.travelexpense.model.Trip;
 
 /**
  * A {@link Fragment} subclass for the item details screen.
@@ -23,21 +22,20 @@ import taijigoldfish.travelexpense.model.Trip;
 public class DetailsFragment extends AbstractFragment {
     private static final String TAG = DetailsFragment.class.getName();
 
-    private static final String ARG_DAY_INDEX = "arg_input_day";
+    @BindView(R.id.daySpinner)
+    Spinner daySpinner;
 
-    @BindView(R.id.editItemType)
-    EditText editItemType;
+    @BindView(R.id.itemTypeSpinner)
+    Spinner itemTypeSpinner;
 
     @BindView(R.id.editItemDetails)
     EditText editItemDetails;
 
     @BindView(R.id.payTypeSpinner)
-    Spinner typeSpinner;
+    Spinner payTypeSpinner;
 
     @BindView(R.id.editItemAmount)
     EditText editItemAmount;
-
-    private int day;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -48,14 +46,12 @@ public class DetailsFragment extends AbstractFragment {
      * this fragment using the provided parameters.
      *
      * @param tripJson the trip in JSON format.
-     * @param day      the day for details input.
      * @return A new instance of fragment EditFragment.
      */
-    public static DetailsFragment newInstance(String tripJson, int day) {
+    public static DetailsFragment newInstance(String tripJson) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
         args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
-        args.putInt(ARG_DAY_INDEX, day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,9 +59,6 @@ public class DetailsFragment extends AbstractFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.day = getArguments().getInt(ARG_DAY_INDEX);
-        }
     }
 
     @Override
@@ -75,27 +68,35 @@ public class DetailsFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, view);
 
-        this.txtTripTitle.setText(genTripTitle(getTrip()));
+        // populate the day spinner
+        ArrayAdapter<CharSequence> dayAdapter =
+                new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item);
+        for (String s : getDateStrings()) {
+            dayAdapter.add(s);
+        }
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        this.daySpinner.setAdapter(dayAdapter);
+
+        // get the last day position
+        int day = Utils.getPreferredDay(getActivity());
+        this.daySpinner.setSelection(day);
+
+        // item type choice
+        ArrayAdapter<CharSequence> itemTypeAdapter =
+                ArrayAdapter.createFromResource(
+                        this.getActivity(), R.array.item_type_array, android.R.layout.simple_spinner_item);
+        itemTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.itemTypeSpinner.setAdapter(itemTypeAdapter);
 
         // pay type choice
-        ArrayAdapter<CharSequence> adapter =
+        ArrayAdapter<CharSequence> payTypeAdapter =
                 ArrayAdapter.createFromResource(
                         this.getActivity(), R.array.pay_type_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        this.typeSpinner.setAdapter(adapter);
+        payTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.payTypeSpinner.setAdapter(payTypeAdapter);
 
         return view;
-    }
-
-    @Override
-    protected String genTripTitle(Trip trip) {
-        if (trip != null) {
-            return this.getResources().getString(R.string.txt_item_title,
-                    trip.getDestination(), this.day + 1
-            );
-        }
-        return "Unknown trip (Day" + (this.day + 1) + ")";
     }
 
     @OnClick(R.id.btnSave)
@@ -104,11 +105,11 @@ public class DetailsFragment extends AbstractFragment {
 
             Item item = new Item();
             item.setTripId(getTrip().getId());
-            item.setDay(this.day);
-            item.setType(this.editItemType.getText().toString());
+            item.setDay(this.daySpinner.getSelectedItemPosition());
+            item.setType(this.itemTypeSpinner.getSelectedItem().toString());
             item.setDetails(this.editItemDetails.getText().toString());
 
-            if (this.typeSpinner.getSelectedItemPosition() == 0) {
+            if (this.payTypeSpinner.getSelectedItemPosition() == 0) {
                 item.setPayType(Item.PAY_TYPE_CASH);
             } else {
                 item.setPayType(Item.PAY_TYPE_VISA);

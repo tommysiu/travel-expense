@@ -48,9 +48,9 @@ public class EditFragment extends AbstractFragment {
     }
 
     @OnClick(R.id.btnInput)
-    public void inputDay() {
+    public void inputDetails() {
         if (this.mListener != null) {
-            this.mListener.onInputDay();
+            this.mListener.onInputDetails();
         }
     }
 

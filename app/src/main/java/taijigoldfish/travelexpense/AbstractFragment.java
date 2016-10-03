@@ -3,7 +3,6 @@ package taijigoldfish.travelexpense;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -32,8 +31,8 @@ public class AbstractFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             String json = getArguments().getString(ARG_TRIP_JSON);
-            Log.d(TAG, "Json = " + json);
             setTrip(new Gson().fromJson(json, Trip.class));
+
             this.tripTitle = genTripTitle(this.trip);
             this.dateStrings = Utils.genDateStrings(this.trip);
         }

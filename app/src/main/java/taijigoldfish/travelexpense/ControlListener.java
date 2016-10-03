@@ -16,9 +16,7 @@ public interface ControlListener {
 
     void onEditTrip();
 
-    void onInputDay();
-
-    void onInputDetails(int day);
+    void onInputDetails();
 
     void onSaveDetails(Item item);
 
