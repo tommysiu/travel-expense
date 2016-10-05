@@ -9,15 +9,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import taijigoldfish.travelexpense.model.Item;
 
 /**
@@ -32,6 +34,9 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
 
     @BindView(R.id.listView)
     ListView listView;
+
+    @BindView(R.id.switchGroupItem)
+    Switch btnGroupItems;
 
     private Map<Integer, List<Summary>> summaryMap = new TreeMap<>();
 
@@ -69,39 +74,31 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
         for (int i = 0; i < days; i++) {
             float daySpent = 0f;
             float dayCashSpent = 0f;
+            List<Summary> summaryList = new ArrayList<>();
+
             List<Item> list = itemMap.get(i);
             if (list == null) {
                 list = new ArrayList<>();
             }
-            Map<String, Float> amounts = new HashMap<>();
+
             for (Item item : list) {
                 daySpent += item.getAmount();
                 if (item.getPayType().equals(Item.PAY_TYPE_CASH)) {
                     dayCashSpent += item.getAmount();
                 }
+                summaryList.add(new Summary(item.getType(), item.getAmount()));
 
-                String type = item.getType().toUpperCase().trim();
-                float typeSum = 0f;
-                if (amounts.containsKey(type)) {
-                    typeSum = amounts.get(type);
-                }
-                amounts.put(type, typeSum + item.getAmount());
             }
             totalCashLeft -= dayCashSpent;
 
             // populate the summary for day i
-            List<Summary> summaryList = new ArrayList<>();
-            for (Map.Entry<String, Float> entry : amounts.entrySet()) {
-                summaryList.add(new Summary(entry.getKey(), entry.getValue()));
-            }
-            summaryList.add(new Summary("Spent(cash)", dayCashSpent));
-            summaryList.add(new Summary("Spent(visa)", daySpent - dayCashSpent));
-            summaryList.add(new Summary("Spent(total)", daySpent));
-            summaryList.add(new Summary("Cash Left", totalCashLeft));
+            summaryList.add(new Summary("Cash Expense", dayCashSpent, true));
+            summaryList.add(new Summary("VISA Expense", daySpent - dayCashSpent, true));
+            summaryList.add(new Summary("Total Expense", daySpent, true));
+            summaryList.add(new Summary("Cash Left", totalCashLeft, true));
 
             this.summaryMap.put(i, summaryList);
         }
-
     }
 
     @Override
@@ -123,6 +120,8 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
         this.daySpinner.setAdapter(adapter);
         this.daySpinner.setOnItemSelectedListener(this);
 
+        this.btnGroupItems.setChecked(true);
+
         refreshList(0);
 
         return view;
@@ -138,30 +137,75 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
         refreshList(position);
     }
 
+    @OnCheckedChanged(R.id.switchGroupItem)
+    public void onCheckedChanged() {
+        refreshList(this.daySpinner.getSelectedItemPosition());
+    }
+
     private void refreshList(int day) {
-        List<Summary> list = this.summaryMap.get(day);
-        if (list == null) {
-            list = new ArrayList<>();
+        List<Summary> list = null;
+        List<Summary> original = this.summaryMap.get(day);
+
+        if (original == null) {
+            original = new ArrayList<>();
         }
+
+        if (this.btnGroupItems.isChecked()) {
+            list = new ArrayList<>();
+            Map<String, Float> group = new LinkedHashMap<>();
+            List<Summary> totalFields = new ArrayList<>();
+            for (Summary item : original) {
+                if (item.isTotalField()) {
+                    totalFields.add(item);
+                } else {
+                    if (!group.containsKey(item.getTitle())) {
+                        group.put(item.getTitle(), item.getAmount());
+                    } else {
+                        Float total = group.get(item.getTitle()) + item.getAmount();
+                        group.put(item.getTitle(), total);
+                    }
+                }
+            }
+
+            for (Map.Entry<String, Float> entry : group.entrySet()) {
+                list.add(new Summary(entry.getKey(), entry.getValue()));
+            }
+            list.addAll(totalFields);
+
+        } else {
+            list = original;
+        }
+
+
         SummaryItemAdapter adapter = new SummaryItemAdapter(getContext(), getTrip(), list);
         this.listView.setAdapter(adapter);
     }
 
-    public static class Summary {
+    static class Summary {
         private String title;
         private float amount;
+        private boolean totalField;
 
-        public Summary(String title, Float amount) {
+        Summary(String title, Float amount, boolean totalField) {
             this.title = title;
             this.amount = amount;
+            this.totalField = totalField;
         }
 
-        public String getTitle() {
+        Summary(String title, Float amount) {
+            this(title, amount, false);
+        }
+
+        String getTitle() {
             return this.title;
         }
 
-        public float getAmount() {
+        float getAmount() {
             return this.amount;
+        }
+
+        public boolean isTotalField() {
+            return this.totalField;
         }
     }
 }

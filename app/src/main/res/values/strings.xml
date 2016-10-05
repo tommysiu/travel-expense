@@ -56,6 +56,7 @@
 
     <!-- summary screen -->
     <string name="txt_amount">%1$.2f (%2$s)</string>
+    <string name="switch_grouping">Grouping</string>
 
     <!-- Strings related to Settings -->
 

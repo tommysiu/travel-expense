@@ -1,13 +1,13 @@
 <!-- The main content view -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/myToolbar">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/myToolbar">
 
     <View
         android:id="@+id/center"
         android:layout_width="0dp"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"/>
 
     <TextView
         android:id="@+id/txtTripTitle"
@@ -15,32 +15,43 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="95dp"
+        android:layout_marginTop="@dimen/summary_list_top_margin"
         android:text="@string/txt_trip_title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <Space
         android:id="@+id/space"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_below="@+id/txtTripTitle" />
+        android:layout_height="@dimen/summary_middle_space_height"
+        android:layout_below="@+id/txtTripTitle"/>
 
     <Spinner
         android:id="@+id/daySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/space"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/summary_middle_small_space"/>
+
+    <Switch
+        android:id="@+id/switchGroupItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/daySpinner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/summary_middle_small_space"
+        android:checked="true"
+        android:text="@string/switch_grouping"/>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/daySpinner"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/switchGroupItem"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/summary_list_bottom_margin"
         android:layout_marginLeft="@dimen/summary_horizontal_margin"
-        android:layout_marginRight="@dimen/summary_horizontal_margin" />
-
+        android:layout_marginRight="@dimen/summary_horizontal_margin"/>
 
 </RelativeLayout>
