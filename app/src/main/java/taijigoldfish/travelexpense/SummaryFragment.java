@@ -143,57 +143,73 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
     }
 
     private void refreshList(int day) {
-        List<Summary> list = null;
-        List<Summary> original = this.summaryMap.get(day);
+        List<Summary> outputList = null;
+        List<Summary> originalList = this.summaryMap.get(day);
 
-        if (original == null) {
-            original = new ArrayList<>();
+        if (originalList == null) {
+            originalList = new ArrayList<>();
         }
 
         if (this.btnGroupItems.isChecked()) {
-            list = new ArrayList<>();
-            Map<String, Float> group = new LinkedHashMap<>();
-            List<Summary> totalFields = new ArrayList<>();
-            for (Summary item : original) {
-                if (item.isTotalField()) {
-                    totalFields.add(item);
+            outputList = new ArrayList<>();
+            Map<String, List<Float>> itemEntriesMap = new LinkedHashMap<>();
+            List<Summary> summaryEntries = new ArrayList<>();
+
+            for (Summary item : originalList) {
+                if (item.isSummaryFlag()) {
+                    summaryEntries.add(item);
                 } else {
-                    if (!group.containsKey(item.getTitle())) {
-                        group.put(item.getTitle(), item.getAmount());
+                    if (!itemEntriesMap.containsKey(item.getTitle())) {
+                        List<Float> list = new ArrayList<>();
+                        list.add(item.getAmount());
+                        itemEntriesMap.put(item.getTitle(), list);
                     } else {
-                        Float total = group.get(item.getTitle()) + item.getAmount();
-                        group.put(item.getTitle(), total);
+                        itemEntriesMap.get(item.getTitle()).add(item.getAmount());
                     }
                 }
             }
 
-            for (Map.Entry<String, Float> entry : group.entrySet()) {
-                list.add(new Summary(entry.getKey(), entry.getValue()));
+            for (Map.Entry<String, List<Float>> entry : itemEntriesMap.entrySet()) {
+                float sum = 0f;
+                for (Float f : entry.getValue()) {
+                    sum += f;
+                }
+                outputList.add(new Summary(entry.getKey(), sum, entry.getValue().size()));
             }
-            list.addAll(totalFields);
+            outputList.addAll(summaryEntries);
 
         } else {
-            list = original;
+            outputList = originalList;
         }
 
 
-        SummaryItemAdapter adapter = new SummaryItemAdapter(getContext(), getTrip(), list);
+        SummaryItemAdapter adapter = new SummaryItemAdapter(getContext(), getTrip(), outputList);
         this.listView.setAdapter(adapter);
     }
 
     static class Summary {
         private String title;
         private float amount;
-        private boolean totalField;
-
-        Summary(String title, Float amount, boolean totalField) {
-            this.title = title;
-            this.amount = amount;
-            this.totalField = totalField;
-        }
+        private int count;
+        private boolean summaryFlag;
 
         Summary(String title, Float amount) {
-            this(title, amount, false);
+            this(title, amount, 1, false);
+        }
+
+        Summary(String title, Float amount, boolean summaryFlag) {
+            this(title, amount, 1, summaryFlag);
+        }
+
+        Summary(String title, Float amount, int count) {
+            this(title, amount, count, false);
+        }
+
+        Summary(String title, Float amount, int count, boolean summaryFlag) {
+            this.title = title;
+            this.amount = amount;
+            this.count = count;
+            this.summaryFlag = summaryFlag;
         }
 
         String getTitle() {
@@ -204,8 +220,12 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
             return this.amount;
         }
 
-        public boolean isTotalField() {
-            return this.totalField;
+        int getCount() {
+            return this.count;
+        }
+
+        boolean isSummaryFlag() {
+            return this.summaryFlag;
         }
     }
 }

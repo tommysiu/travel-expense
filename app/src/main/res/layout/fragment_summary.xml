@@ -25,30 +25,47 @@
         android:layout_height="@dimen/summary_middle_space_height"
         android:layout_below="@+id/txtTripTitle"/>
 
-    <Spinner
-        android:id="@+id/daySpinner"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/dayAndButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/space"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/summary_middle_small_space"/>
-
-    <Switch
-        android:id="@+id/switchGroupItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/daySpinner"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/space"
         android:layout_marginBottom="@dimen/summary_middle_small_space"
-        android:checked="true"
-        android:text="@string/switch_grouping"/>
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/daySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+
+        <Switch
+            android:id="@+id/switchGroupItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/switch_grouping"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/switchGroupItem"
+        android:layout_below="@+id/dayAndButton"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/summary_list_bottom_margin"
         android:layout_marginLeft="@dimen/summary_horizontal_margin"

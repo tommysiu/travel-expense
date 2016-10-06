@@ -30,7 +30,11 @@ public class SummaryItemAdapter extends ArrayAdapter<SummaryFragment.Summary> {
         }
         TextView itemType = (TextView) convertView.findViewById(R.id.txtItemDesc);
         TextView itemAmount = (TextView) convertView.findViewById(R.id.txtItemAmount);
-        itemType.setText(summary.getTitle());
+        String type = summary.getTitle();
+        if (summary.getCount() > 1) {
+            type += " (" + summary.getCount() + ")";
+        }
+        itemType.setText(type);
         itemAmount.setText(getContext().getResources()
                 .getString(R.string.txt_amount, summary.getAmount(), this.trip.getCurrency()));
 
