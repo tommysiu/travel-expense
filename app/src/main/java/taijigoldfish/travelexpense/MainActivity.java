@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -162,9 +163,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
             getSupportFragmentManager().popBackStack();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, EditFragment.newInstance(
-                            this.gson.toJson(trip)
-                    ))
+                    .replace(R.id.fragment_container, EditFragment.newInstance(trip))
                     .addToBackStack(null)
                     .commit();
         } else {
@@ -181,8 +180,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            transaction.replace(R.id.fragment_container, EditFragment.newInstance(
-                    this.gson.toJson(trip)));
+            transaction.replace(R.id.fragment_container, EditFragment.newInstance(trip));
             transaction.addToBackStack(null);
 
             transaction.commit();
@@ -203,8 +201,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, DetailsFragment.newInstance(
-                this.gson.toJson(this.currentTrip)
-        ));
+                this.currentTrip));
         transaction.addToBackStack(null);
 
         transaction.commit();
@@ -212,32 +209,69 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onSaveDetails(Item item) {
+
         // Save item details, back to previous fragment
-        this.dbHelper.saveItem(this.currentTripId, item);
+        if (item.getId() == -1) {
+            this.dbHelper.saveItem(this.currentTripId, item);
 
-        // update last selected day if necessary
-        int lastSelectedDay = Utils.getPreferredDay(this);
-        if (item.getDay() != lastSelectedDay) {
-            Utils.setPreferredDay(this, item.getDay());
-        }
+            // update last selected day if necessary
+            int lastSelectedDay = Utils.getPreferredDay(this);
+            if (item.getDay() != lastSelectedDay) {
+                Utils.setPreferredDay(this, item.getDay());
+            }
 
-        List<Item> itemList = this.currentTrip.getItemMap().get(item.getDay());
-        if (itemList == null) {
-            itemList = new ArrayList<>();
-            this.currentTrip.getItemMap().put(item.getDay(), itemList);
+            // add item to in-memory map
+            List<Item> itemList = this.currentTrip.getItemMap().get(item.getDay());
+            if (itemList == null) {
+                itemList = new ArrayList<>();
+                this.currentTrip.getItemMap().put(item.getDay(), itemList);
+            }
+            itemList.add(item);
+        } else {
+            this.dbHelper.updateItem(item);
+
+            // update the item in the list, and optionally relocate to another day
+            boolean found = false;
+            for (Map.Entry<Integer, List<Item>> entry : this.currentTrip.getItemMap().entrySet()) {
+                int day = entry.getKey();
+                for (Item it : entry.getValue()) {
+                    if (it.getId() == item.getId()) {
+                        found = true;
+                        if (day != item.getDay()) {
+                            entry.getValue().remove(it);
+                            this.currentTrip.getItemMap().get(item.getDay()).add(item);
+                        } else {
+                            it.setType(item.getType());
+                            it.setDetails(item.getDetails());
+                            it.setPayType(item.getPayType());
+                            it.setAmount(item.getAmount());
+                        }
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
         }
-        itemList.add(item);
         getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onEditItem(Item item) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, DetailsFragment.newEditInstance(
+                this.currentTrip, item));
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
     public void onSummary() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
         transaction.replace(R.id.fragment_container, SummaryFragment.newInstance(
-                this.gson.toJson(this.currentTrip)));
+                this.currentTrip));
         transaction.addToBackStack(null);
-
         transaction.commit();
     }
 

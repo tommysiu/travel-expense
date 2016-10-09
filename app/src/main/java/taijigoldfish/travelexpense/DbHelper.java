@@ -97,6 +97,21 @@ public class DbHelper extends SQLiteOpenHelper {
         return db.insert(DbContract.ItemEntry.TABLE_NAME, null, cv);
     }
 
+    public int updateItem(Item item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(DbContract.ItemEntry.COLUMN_NAME_DAY, item.getDay());
+        cv.put(DbContract.ItemEntry.COLUMN_NAME_TYPE, item.getType());
+        cv.put(DbContract.ItemEntry.COLUMN_NAME_DETAILS, item.getDetails());
+        cv.put(DbContract.ItemEntry.COLUMN_NAME_PAY_TYPE, item.getPayType());
+        cv.put(DbContract.ItemEntry.COLUMN_NAME_AMOUNT, item.getAmount());
+
+        return db.update(DbContract.ItemEntry.TABLE_NAME, cv,
+                DbContract.ItemEntry.COLUMN_NAME_TRIP_ID + "=? AND " + BaseColumns._ID + "=?",
+                new String[]{"" + item.getTripId(), "" + item.getId()});
+    }
+
     public Trip getLatestTrip() {
         SQLiteDatabase db = this.getReadableDatabase();
 

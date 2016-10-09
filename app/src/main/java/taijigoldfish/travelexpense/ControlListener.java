@@ -20,6 +20,8 @@ public interface ControlListener {
 
     void onSaveDetails(Item item);
 
+    void onEditItem(Item item);
+
     void onSummary();
 
     void onSaveToCloud();

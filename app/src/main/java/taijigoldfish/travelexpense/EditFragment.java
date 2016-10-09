@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import taijigoldfish.travelexpense.model.Trip;
 
 /**
  * A {@link Fragment} class for the active trip screen.
@@ -24,13 +27,13 @@ public class EditFragment extends AbstractFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param tripJson The trip object in JSON.
+     * @param trip The trip object.
      * @return A new instance of fragment EditFragment.
      */
-    public static EditFragment newInstance(String tripJson) {
+    public static EditFragment newInstance(Trip trip) {
         EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
-        args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
+        args.putString(AbstractFragment.ARG_TRIP_JSON, new Gson().toJson(trip));
         fragment.setArguments(args);
         return fragment;
     }

@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,14 +22,19 @@ import java.util.TreeMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnItemClick;
 import taijigoldfish.travelexpense.model.Item;
+import taijigoldfish.travelexpense.model.Trip;
 
 /**
  * A {@link Fragment} class for the trip summary screen.
  * Use the {@link SummaryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SummaryFragment extends AbstractFragment implements AdapterView.OnItemSelectedListener {
+public class SummaryFragment extends AbstractFragment implements
+        AdapterView.OnItemSelectedListener {
+
+    private static final String TAG = SummaryFragment.class.getName();
 
     @BindView(R.id.daySpinner)
     Spinner daySpinner;
@@ -48,13 +55,13 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param tripJson The trip object in JSON.
+     * @param trip The trip object.
      * @return A new instance of fragment SummaryFragment.
      */
-    public static SummaryFragment newInstance(String tripJson) {
+    public static SummaryFragment newInstance(Trip trip) {
         SummaryFragment fragment = new SummaryFragment();
         Bundle args = new Bundle();
-        args.putString(AbstractFragment.ARG_TRIP_JSON, tripJson);
+        args.putString(AbstractFragment.ARG_TRIP_JSON, new Gson().toJson(trip));
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,7 +93,7 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
                 if (item.getPayType().equals(Item.PAY_TYPE_CASH)) {
                     dayCashSpent += item.getAmount();
                 }
-                summaryList.add(new Summary(item.getType(), item.getAmount()));
+                summaryList.add(new Summary(item.getType(), item.getAmount()).setItem(item));
 
             }
             totalCashLeft -= dayCashSpent;
@@ -110,7 +117,7 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
 
         this.txtTripTitle.setText(getTripTitle());
 
-        // populate the day spinner
+        // populate the day selector_spinner
         ArrayAdapter<CharSequence> adapter =
                 new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item);
         for (String s : getDateStrings()) {
@@ -152,29 +159,34 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
 
         if (this.btnGroupItems.isChecked()) {
             outputList = new ArrayList<>();
-            Map<String, List<Float>> itemEntriesMap = new LinkedHashMap<>();
+            Map<String, List<Summary>> typeEntriesMap = new LinkedHashMap<>();
             List<Summary> summaryEntries = new ArrayList<>();
 
             for (Summary item : originalList) {
                 if (item.isSummaryFlag()) {
                     summaryEntries.add(item);
                 } else {
-                    if (!itemEntriesMap.containsKey(item.getTitle())) {
-                        List<Float> list = new ArrayList<>();
-                        list.add(item.getAmount());
-                        itemEntriesMap.put(item.getTitle(), list);
+                    if (!typeEntriesMap.containsKey(item.getTitle())) {
+                        List<Summary> list = new ArrayList<>();
+                        list.add(item);
+                        typeEntriesMap.put(item.getTitle(), list);
                     } else {
-                        itemEntriesMap.get(item.getTitle()).add(item.getAmount());
+                        typeEntriesMap.get(item.getTitle()).add(item);
                     }
                 }
             }
 
-            for (Map.Entry<String, List<Float>> entry : itemEntriesMap.entrySet()) {
+            for (Map.Entry<String, List<Summary>> entry : typeEntriesMap.entrySet()) {
+                List<Summary> itemList = entry.getValue();
                 float sum = 0f;
-                for (Float f : entry.getValue()) {
-                    sum += f;
+                for (Summary subItem : itemList) {
+                    sum += subItem.getAmount();
                 }
-                outputList.add(new Summary(entry.getKey(), sum, entry.getValue().size()));
+                Summary summary = new Summary(entry.getKey(), sum, itemList.size());
+                if (itemList.size() == 1) {
+                    summary.setItem(itemList.get(0).getItem());
+                }
+                outputList.add(summary);
             }
             outputList.addAll(summaryEntries);
 
@@ -187,11 +199,24 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
         this.listView.setAdapter(adapter);
     }
 
+    @OnItemClick(R.id.listView)
+    protected void onSummaryItemClick(int position) {
+        Summary summary = (Summary) this.listView.getAdapter().getItem(position);
+        Item item = summary.getItem();
+        if (item != null) {
+            this.mListener.onEditItem(item);
+        } else if (summary.getCount() > 1) {
+            this.btnGroupItems.setChecked(false);
+            refreshList(this.daySpinner.getSelectedItemPosition());
+        }
+    }
+
     static class Summary {
         private String title;
         private float amount;
         private int count;
         private boolean summaryFlag;
+        private Item item;
 
         Summary(String title, Float amount) {
             this(title, amount, 1, false);
@@ -226,6 +251,15 @@ public class SummaryFragment extends AbstractFragment implements AdapterView.OnI
 
         boolean isSummaryFlag() {
             return this.summaryFlag;
+        }
+
+        public Item getItem() {
+            return this.item;
+        }
+
+        public Summary setItem(Item item) {
+            this.item = item;
+            return this;
         }
     }
 }
