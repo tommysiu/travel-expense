@@ -2,6 +2,7 @@ package taijigoldfish.travelexpense;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,10 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -70,6 +75,13 @@ public class SummaryFragment extends AbstractFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         populateSummaryList();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private void populateSummaryList() {
@@ -209,6 +221,14 @@ public class SummaryFragment extends AbstractFragment implements
             this.btnGroupItems.setChecked(false);
             refreshList(this.daySpinner.getSelectedItemPosition());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTripUpdated(TripUpdateEvent tripUpdateEvent) {
+        Log.i(TAG, "trip event received = " + tripUpdateEvent);
+        setTrip(tripUpdateEvent.getTrip());
+        populateSummaryList();
+        refreshList(this.daySpinner.getSelectedItemPosition());
     }
 
     static class Summary {

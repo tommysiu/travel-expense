@@ -43,6 +43,8 @@ import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 import com.google.api.services.sheets.v4.model.TextFormat;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,6 +255,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     break;
                 }
             }
+
+            EventBus.getDefault().post(new TripUpdateEvent(this.currentTrip));
         }
         getSupportFragmentManager().popBackStack();
     }
