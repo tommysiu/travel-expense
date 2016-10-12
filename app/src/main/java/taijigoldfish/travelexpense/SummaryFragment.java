@@ -2,7 +2,6 @@ package taijigoldfish.travelexpense;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,7 +224,6 @@ public class SummaryFragment extends AbstractFragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTripUpdated(TripUpdateEvent tripUpdateEvent) {
-        Log.i(TAG, "trip event received = " + tripUpdateEvent);
         setTrip(tripUpdateEvent.getTrip());
         populateSummaryList();
         refreshList(this.daySpinner.getSelectedItemPosition());

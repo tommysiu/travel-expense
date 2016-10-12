@@ -136,7 +136,7 @@
         android:layout_alignStart="@+id/payTypeSpinner"
         android:layout_alignTop="@+id/txtItemAmount"
         android:layout_marginEnd="24dp"
-        android:inputType="text"/>
+        android:inputType="numberDecimal"/>
 
     <Button
         android:id="@+id/btnSave"
