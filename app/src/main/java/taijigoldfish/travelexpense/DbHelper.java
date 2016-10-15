@@ -112,6 +112,13 @@ public class DbHelper extends SQLiteOpenHelper {
                 new String[]{"" + item.getTripId(), "" + item.getId()});
     }
 
+    public int deleteItem(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        return db.delete(DbContract.ItemEntry.TABLE_NAME, BaseColumns._ID + "=?",
+                new String[]{"" + id});
+    }
+
     public Trip getLatestTrip() {
         SQLiteDatabase db = this.getReadableDatabase();
 

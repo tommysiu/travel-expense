@@ -20,6 +20,8 @@ public interface ControlListener {
 
     void onSaveDetails(Item item);
 
+    void onDeleteItem(long id);
+
     void onEditItem(Item item);
 
     void onSummary();

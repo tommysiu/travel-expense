@@ -262,6 +262,31 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     }
 
     @Override
+    public void onDeleteItem(long id) {
+        if (this.dbHelper.deleteItem(id) > 0) {
+            // update item map
+            boolean found = false;
+            for (Map.Entry<Integer, List<Item>> entry : this.currentTrip.getItemMap().entrySet()) {
+                int day = entry.getKey();
+                for (Item it : entry.getValue()) {
+                    if (it.getId() == id) {
+                        found = true;
+                        entry.getValue().remove(it);
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+
+            // publish refresh event
+            EventBus.getDefault().post(new TripUpdateEvent(this.currentTrip));
+        }
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
     public void onEditItem(Item item) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, DetailsFragment.newEditInstance(

@@ -138,15 +138,28 @@
         android:layout_marginEnd="24dp"
         android:inputType="numberDecimal"/>
 
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="@dimen/button_width"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editItemAmount"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="12dp"
         android:layout_marginTop="48dp"
-        android:text="@string/button_ok"/>
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/button_save"/>
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/button_delete"/>
+    </LinearLayout>
 </RelativeLayout>

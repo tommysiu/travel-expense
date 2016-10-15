@@ -36,6 +36,8 @@
     <string name="button_input_details">Input Details</string>
 
     <!-- details screen -->
+    <string name="button_save">Save</string>
+    <string name="button_delete">Delete</string>
     <string name="txt_item_title">%1$s Trip (Day %2$d)</string>
     <string name="txt_item_type">Type</string>
     <string name="txt_item_details">Details</string>
@@ -53,6 +55,7 @@
         <item>Cash</item>
         <item>Visa</item>
     </string-array>
+    <string name="txt_confirm_delete">Confirm Delete?</string>
 
     <!-- summary screen -->
     <string name="txt_amount">%1$.2f (%2$s)</string>

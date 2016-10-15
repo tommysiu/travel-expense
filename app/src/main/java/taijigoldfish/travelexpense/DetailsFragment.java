@@ -1,15 +1,20 @@
 package taijigoldfish.travelexpense;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +46,11 @@ public class DetailsFragment extends AbstractFragment {
 
     @BindView(R.id.editItemAmount)
     EditText editItemAmount;
+
+    @BindView(R.id.btnDelete)
+    Button btnDelete;
+
+    private Item item = null;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -93,10 +103,9 @@ public class DetailsFragment extends AbstractFragment {
         this.txtTripTitle.setText(getTripTitle());
 
         // check if there is an existing item to edit
-        Item item = null;
         String itemStr = getArguments().getString(ARG_EDIT_ITEM, null);
         if (itemStr != null) {
-            item = new Gson().fromJson(itemStr, Item.class);
+            this.item = new Gson().fromJson(itemStr, Item.class);
         }
 
         // populate the day selector_spinner
@@ -126,14 +135,15 @@ public class DetailsFragment extends AbstractFragment {
 
         // get the last input day position for new item
         // or populate the screen for an existing item
-        if (item == null) {
+        if (this.item == null) {
             this.daySpinner.setSelection(Utils.getPreferredDay(getActivity()));
+            this.btnDelete.setVisibility(View.GONE);
         } else {
-            this.daySpinner.setSelection(item.getDay());
-            this.itemTypeSpinner.setSelection(getItemTypePosition(item.getType()));
-            this.editItemDetails.setText(item.getDetails());
-            this.payTypeSpinner.setSelection(getPayTypePosition(item.getPayType()));
-            this.editItemAmount.setText(Float.toString(item.getAmount()));
+            this.daySpinner.setSelection(this.item.getDay());
+            this.itemTypeSpinner.setSelection(getItemTypePosition(this.item.getType()));
+            this.editItemDetails.setText(this.item.getDetails());
+            this.payTypeSpinner.setSelection(getPayTypePosition(this.item.getPayType()));
+            this.editItemAmount.setText(String.format(Locale.ENGLISH, "%.2f", this.item.getAmount()));
         }
 
         return view;
@@ -166,20 +176,41 @@ public class DetailsFragment extends AbstractFragment {
     @OnClick(R.id.btnSave)
     public void saveDetails() {
         if (this.mListener != null) {
+            this.item.setDay(this.daySpinner.getSelectedItemPosition());
+            this.item.setType(this.itemTypeSpinner.getSelectedItem().toString());
+            this.item.setDetails(this.editItemDetails.getText().toString());
+            this.item.setPayType(this.payTypeSpinner.getSelectedItem().toString());
+            this.item.setAmount(Float.parseFloat(this.editItemAmount.getText().toString()));
 
-            String itemStr = getArguments().getString(ARG_EDIT_ITEM, null);
-            Item item = new Item();
-            if (itemStr != null) {
-                item = new Gson().fromJson(itemStr, Item.class);
-            }
-            item.setTripId(getTrip().getId());
-            item.setDay(this.daySpinner.getSelectedItemPosition());
-            item.setType(this.itemTypeSpinner.getSelectedItem().toString());
-            item.setDetails(this.editItemDetails.getText().toString());
-            item.setPayType(this.payTypeSpinner.getSelectedItem().toString());
-            item.setAmount(Float.parseFloat(this.editItemAmount.getText().toString()));
-
-            this.mListener.onSaveDetails(item);
+            this.mListener.onSaveDetails(this.item);
         }
     }
+
+    @OnClick(R.id.btnDelete)
+    public void deleteItem() {
+        showConfirmDeleteDialog();
+    }
+
+    private void showConfirmDeleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+                .setTitle(getResources().getString(R.string.txt_confirm_delete))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        if (DetailsFragment.this.mListener != null && DetailsFragment.this.item != null) {
+                            DetailsFragment.this.mListener.onDeleteItem(DetailsFragment.this.item.getId());
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }
