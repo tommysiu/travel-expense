@@ -176,6 +176,9 @@ public class DetailsFragment extends AbstractFragment {
     @OnClick(R.id.btnSave)
     public void saveDetails() {
         if (this.mListener != null) {
+            if (this.item == null) {
+                this.item = new Item();
+            }
             this.item.setDay(this.daySpinner.getSelectedItemPosition());
             this.item.setType(this.itemTypeSpinner.getSelectedItem().toString());
             this.item.setDetails(this.editItemDetails.getText().toString());

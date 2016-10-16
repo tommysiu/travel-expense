@@ -18,6 +18,11 @@
     <!-- main screen -->
     <string name="button_new_trip">New Trip</string>
     <string name="button_current_trip">Current Trip</string>
+    <string name="button_all_trip">List of Trips</string>
+
+    <!-- trip list dialog -->
+    <string name="title_trip_list">Your Trips</string>
+    <string name="button_select_active">Set As Current</string>
 
     <!-- new trip screen -->
     <string name="txt_destination">Destination</string>

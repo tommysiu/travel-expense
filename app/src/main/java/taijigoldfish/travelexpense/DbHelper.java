@@ -176,4 +176,27 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return trip;
     }
+
+    public List<Trip> getTripList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Trip> list = new ArrayList<>();
+
+        try (Cursor c = db.query(DbContract.TripEntry.TABLE_NAME,
+                new String[]{
+                        BaseColumns._ID,
+                        DbContract.TripEntry.COLUMN_NAME_DESTINATION,
+                        DbContract.TripEntry.COLUMN_NAME_START_DATE},
+                null, null, null, null,
+                DbContract.TripEntry.COLUMN_NAME_START_DATE + " DESC")) {
+            while (c.moveToNext()) {
+                Trip trip = new Trip();
+                trip.setId(c.getLong(0));
+                trip.setDestination(c.getString(1));
+                trip.setStartDate(new Date(c.getLong(2)));
+                list.add(trip);
+            }
+        }
+
+        return list;
+    }
 }

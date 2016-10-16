@@ -16,6 +16,8 @@ public interface ControlListener {
 
     void onEditTrip();
 
+    void onSelectTrip(long id);
+
     void onInputDetails();
 
     void onSaveDetails(Item item);

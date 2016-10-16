@@ -99,6 +99,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
         setSupportActionBar(this.mToolbar);
 
+        this.googleAccountCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
+
+        this.progressDialog = new ProgressDialog(this);
+        this.progressDialog.setMessage("Saving to Google Drive...");
+
         // if we're being restored from a previous state,
         // then we don't need to do anything and should return or else
         // we could end up with overlapping fragments.
@@ -107,13 +114,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
             this.currentTrip = this.dbHelper.getTrip(this.currentTripId);
             return;
         }
-
-        this.googleAccountCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
-
-        this.progressDialog = new ProgressDialog(this);
-        this.progressDialog.setMessage("Saving to Google Drive...");
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, MainFragment.newInstance())
@@ -175,7 +175,20 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onEditTrip() {
-        Trip trip = this.dbHelper.getLatestTrip();
+        long id = Utils.getCurrentTripId(this);
+        if (id != -1) {
+            selectTrip(this.dbHelper.getTrip(id));
+        } else {
+            selectTrip(this.dbHelper.getLatestTrip());
+        }
+    }
+
+    @Override
+    public void onSelectTrip(long id) {
+        selectTrip(this.dbHelper.getTrip(id));
+    }
+
+    private void selectTrip(Trip trip) {
         if (trip != null) {
             setCurrentTrip(trip);
             Log.v(TAG, trip.toString());
@@ -196,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     private void setCurrentTrip(Trip trip) {
         this.currentTrip = trip;
         this.currentTripId = trip.getId();
+        Utils.setCurrentTripId(this, trip.getId());
     }
 
     @Override
