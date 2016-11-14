@@ -12,7 +12,9 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import taijigoldfish.travelexpense.model.Item;
 import taijigoldfish.travelexpense.model.Trip;
 
 public final class Utils {
@@ -57,16 +59,71 @@ public final class Utils {
     }
 
     public static int getPreferredDay(Activity activity) {
+        if (activity == null) {
+            return 0;
+        }
         return activity.getPreferences(Context.MODE_PRIVATE).getInt(PREF_ACTIVE_DAY, 0);
     }
 
     public static void setPreferredDay(Activity activity, int day) {
-        SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
-        editor.putInt(PREF_ACTIVE_DAY, day);
-        editor.apply();
+        if (activity != null) {
+            SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
+            editor.putInt(PREF_ACTIVE_DAY, day);
+            editor.apply();
+        }
     }
 
     public static String formatDate(Date date) {
         return new DateTime(date).toString(DATE_FORMATTER);
+    }
+
+    public static void addTripItem(Activity activity, DbHelper dbHelper, Trip trip, Item item) {
+        long tripId = trip.getId();
+
+        // Save item details, back to previous fragment
+        if (item.getId() == -1) {
+            dbHelper.saveItem(tripId, item);
+
+            // update last selected day if necessary
+            int lastSelectedDay = getPreferredDay(activity);
+            if (item.getDay() != lastSelectedDay) {
+                setPreferredDay(activity, item.getDay());
+            }
+
+            // add item to in-memory map
+            List<Item> itemList = trip.getItemMap().get(item.getDay());
+            if (itemList == null) {
+                itemList = new ArrayList<>();
+                trip.getItemMap().put(item.getDay(), itemList);
+            }
+            itemList.add(item);
+        } else {
+            dbHelper.updateItem(item);
+
+            // update the item in the list, and optionally relocate to another day
+            boolean found = false;
+            for (Map.Entry<Integer, List<Item>> entry : trip.getItemMap().entrySet()) {
+                int day = entry.getKey();
+                for (Item it : entry.getValue()) {
+                    if (it.getId() == item.getId()) {
+                        found = true;
+                        if (day != item.getDay()) {
+                            entry.getValue().remove(it);
+                            trip.getItemMap().get(item.getDay()).add(item);
+                        } else {
+                            it.setType(item.getType());
+                            it.setDetails(item.getDetails());
+                            it.setPayType(item.getPayType());
+                            it.setAmount(item.getAmount());
+                        }
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+        }
+
     }
 }

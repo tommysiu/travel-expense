@@ -1,5 +1,6 @@
 package taijigoldfish.travelexpense.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,43 @@ public class Trip {
 
     public void setItemMap(Map<Integer, List<Item>> itemMap) {
         this.itemMap = itemMap;
+    }
+
+    public void addItem(Item item) {
+        // Add new item or update existing item
+        if (item.getId() == -1) {
+            // add item to in-memory map
+            List<Item> itemList = getItemMap().get(item.getDay());
+            if (itemList == null) {
+                itemList = new ArrayList<>();
+                getItemMap().put(item.getDay(), itemList);
+            }
+            itemList.add(item);
+        } else {
+            // update the item in the list, and optionally relocate to another day
+            boolean found = false;
+            for (Map.Entry<Integer, List<Item>> entry : getItemMap().entrySet()) {
+                int day = entry.getKey();
+                for (Item it : entry.getValue()) {
+                    if (it.getId() == item.getId()) {
+                        found = true;
+                        if (day != item.getDay()) {
+                            entry.getValue().remove(it);
+                            getItemMap().get(item.getDay()).add(item);
+                        } else {
+                            it.setType(item.getType());
+                            it.setDetails(item.getDetails());
+                            it.setPayType(item.getPayType());
+                            it.setAmount(item.getAmount());
+                        }
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+        }
     }
 
     @Override

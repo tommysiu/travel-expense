@@ -29,4 +29,6 @@ public interface ControlListener {
     void onSummary();
 
     void onSaveToCloud();
+
+    void onReadFromCloud();
 }

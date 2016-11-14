@@ -7,12 +7,13 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,33 +23,20 @@ import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
-import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.CellData;
-import com.google.api.services.sheets.v4.model.CellFormat;
-import com.google.api.services.sheets.v4.model.ExtendedValue;
-import com.google.api.services.sheets.v4.model.GridData;
-import com.google.api.services.sheets.v4.model.RowData;
-import com.google.api.services.sheets.v4.model.Sheet;
-import com.google.api.services.sheets.v4.model.Spreadsheet;
-import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
-import com.google.api.services.sheets.v4.model.TextFormat;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,13 +49,18 @@ import taijigoldfish.travelexpense.model.Trip;
 
 
 public class MainActivity extends AppCompatActivity implements ControlListener,
-        EasyPermissions.PermissionCallbacks {
+        EasyPermissions.PermissionCallbacks, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+    public static final int REQUEST_AUTHORIZATION = 2001;
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int REQUEST_ACCOUNT_PICKER = 1000;
-    private static final int REQUEST_AUTHORIZATION = 1001;
+    private static final int REQUEST_IMPORT_ACCOUNT_PICKER = 1000;
+    private static final int REQUEST_EXPORT_ACCOUNT_PICKER = 1001;
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     private static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    private static final int REQUEST_DRIVE_OPENER = 1004;
+    private static final int REQUEST_GOOGLE_RESOLUTION = 1005;
 
     private static final String[] SCOPES = {SheetsScopes.SPREADSHEETS};
 
@@ -80,12 +73,12 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     private DbHelper dbHelper;
 
-    private Gson gson = new Gson();
-
     private long currentTripId = -1;
     private Trip currentTrip;
 
     private GoogleAccountCredential googleAccountCredential;
+
+    private GoogleApiClient googleApiClient;
 
     private ProgressDialog progressDialog;
 
@@ -118,6 +111,14 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, MainFragment.newInstance())
                 .commit();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -142,6 +143,78 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (this.googleApiClient != null) {
+            this.googleApiClient.disconnect();
+        }
+        super.onPause();
+    }
+
+    private void connectGoogleDrive() {
+        if (this.googleApiClient == null) {
+            this.googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+
+        if (!this.googleApiClient.isConnected() && !this.googleApiClient.isConnecting()) {
+            this.googleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "GoogleApiClient onConnected");
+
+        IntentSender intentSender = Drive.DriveApi.newOpenFileActivityBuilder()
+                .build(this.googleApiClient);
+
+        try {
+            startIntentSenderForResult(
+                    intentSender, REQUEST_DRIVE_OPENER, null, 0, 0, 0);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Fail to open drive file");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "GoogleApiClient onConnectionSuspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(TAG, "GoogleApiClient onConnectionFailed: " + connectionResult);
+
+        if (!connectionResult.hasResolution()) {
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
+                    this, 0).show();
+        } else {
+            try {
+                connectionResult.startResolutionForResult(this, REQUEST_GOOGLE_RESOLUTION);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e(TAG, "Failed to resolve Google connection");
+            }
+        }
+    }
+
+    public void showProgressDialog() {
+        this.progressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        this.progressDialog.hide();
     }
 
     @Override
@@ -225,53 +298,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
 
     @Override
     public void onSaveDetails(Item item) {
-
-        // Save item details, back to previous fragment
-        if (item.getId() == -1) {
-            this.dbHelper.saveItem(this.currentTripId, item);
-
-            // update last selected day if necessary
-            int lastSelectedDay = Utils.getPreferredDay(this);
-            if (item.getDay() != lastSelectedDay) {
-                Utils.setPreferredDay(this, item.getDay());
-            }
-
-            // add item to in-memory map
-            List<Item> itemList = this.currentTrip.getItemMap().get(item.getDay());
-            if (itemList == null) {
-                itemList = new ArrayList<>();
-                this.currentTrip.getItemMap().put(item.getDay(), itemList);
-            }
-            itemList.add(item);
-        } else {
-            this.dbHelper.updateItem(item);
-
-            // update the item in the list, and optionally relocate to another day
-            boolean found = false;
-            for (Map.Entry<Integer, List<Item>> entry : this.currentTrip.getItemMap().entrySet()) {
-                int day = entry.getKey();
-                for (Item it : entry.getValue()) {
-                    if (it.getId() == item.getId()) {
-                        found = true;
-                        if (day != item.getDay()) {
-                            entry.getValue().remove(it);
-                            this.currentTrip.getItemMap().get(item.getDay()).add(item);
-                        } else {
-                            it.setType(item.getType());
-                            it.setDetails(item.getDetails());
-                            it.setPayType(item.getPayType());
-                            it.setAmount(item.getAmount());
-                        }
-                        break;
-                    }
-                }
-                if (found) {
-                    break;
-                }
-            }
-
-            EventBus.getDefault().post(new TripUpdateEvent(this.currentTrip));
-        }
+        Utils.addTripItem(this, this.dbHelper, this.currentTrip, item);
+        EventBus.getDefault().post(new TripUpdateEvent(this.currentTrip));
         getSupportFragmentManager().popBackStack();
     }
 
@@ -327,11 +355,28 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (this.googleAccountCredential.getSelectedAccount() == null) {
-            chooseAccount();
+            chooseAccount(true);
         } else if (!isDeviceOnline()) {
             showErrorDialog(getResources().getString(R.string.error_no_network));
         } else {
-            new CreateSheetRequestTask(this.googleAccountCredential).execute();
+            new ExportSheetTask(this, this.googleAccountCredential).execute();
+        }
+    }
+
+    @Override
+    public void onReadFromCloud() {
+        importGoogleSheet();
+    }
+
+    private void importGoogleSheet() {
+        if (!isGooglePlayServicesAvailable()) {
+            acquireGooglePlayServices();
+        } else if (this.googleAccountCredential.getSelectedAccount() == null) {
+            chooseAccount(false);
+        } else if (!isDeviceOnline()) {
+            showErrorDialog(getResources().getString(R.string.error_no_network));
+        } else if (this.googleApiClient == null || !this.googleApiClient.isConnected()) {
+            connectGoogleDrive();
         }
     }
 
@@ -351,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         }
     }
 
-    private void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
+    public void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
@@ -362,17 +407,26 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     }
 
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
-    private void chooseAccount() {
+    private void chooseAccount(boolean accountForExport) {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS)) {
             String accountName = getPreferences(Context.MODE_PRIVATE)
                     .getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 this.googleAccountCredential.setSelectedAccountName(accountName);
-                exportGoogleSheet();
+                if (accountForExport) {
+                    exportGoogleSheet();
+                } else {
+                    importGoogleSheet();
+                }
             } else {
+                int requestCode = REQUEST_EXPORT_ACCOUNT_PICKER;
+
+                if (!accountForExport) {
+                    requestCode = REQUEST_IMPORT_ACCOUNT_PICKER;
+                }
                 startActivityForResult(
                         this.googleAccountCredential.newChooseAccountIntent(),
-                        REQUEST_ACCOUNT_PICKER);
+                        requestCode);
             }
         } else {
             EasyPermissions.requestPermissions(
@@ -396,12 +450,12 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         outState.putLong(KEY_TRIP_ID, this.currentTripId);
     }
 
-    private void showMessageDialog(final String message) {
+    public void showMessageDialog(final String message) {
         new AlertDialog.Builder(this).setMessage(message)
                 .setPositiveButton(android.R.string.ok, null).show();
     }
 
-    private void showErrorDialog(final String message) {
+    public void showErrorDialog(final String message) {
         new AlertDialog.Builder(this).setTitle("Error").setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert).show();
@@ -418,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     exportGoogleSheet();
                 }
                 break;
-            case REQUEST_ACCOUNT_PICKER:
+            case REQUEST_EXPORT_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
@@ -431,9 +485,37 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                     }
                 }
                 break;
+            case REQUEST_IMPORT_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+                        this.googleAccountCredential.setSelectedAccountName(accountName);
+                        importGoogleSheet();
+                    }
+                }
+                break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     exportGoogleSheet();
+                }
+                break;
+            case REQUEST_GOOGLE_RESOLUTION:
+                if (resultCode == RESULT_OK) {
+                    importGoogleSheet();
+                }
+                break;
+            case REQUEST_DRIVE_OPENER:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = data
+                            .getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    Log.d(TAG, "DriveId = " + driveId);
+                    Log.d(TAG, "Drive resourceId = " + driveId.getResourceId());
+                    Log.d(TAG, "Drive resourceType = " + driveId.getResourceType());
+                    new ImportSheetTask(this, this.googleAccountCredential).execute(driveId.getResourceId());
                 }
                 break;
             default:
@@ -458,140 +540,30 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
         // Do nothing
     }
 
-    private class CreateSheetRequestTask extends AsyncTask<Void, Void, List<String>> {
-        private Sheets service = null;
-        private Exception lastError = null;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTripImported(TripUpdateEvent tripUpdateEvent) {
+        Trip trip = tripUpdateEvent.getTrip();
+        if (trip != this.currentTrip) {
+            long id = this.dbHelper.saveTrip(trip);
+            if (id != -1) {
+                trip.setId(id);
+                setCurrentTrip(trip);
 
-        CreateSheetRequestTask(GoogleAccountCredential credential) {
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            this.service = new Sheets.Builder(transport, jsonFactory, credential)
-                    .setApplicationName("Travel Expense")
-                    .build();
-        }
-
-        @Override
-        protected List<String> doInBackground(Void... params) {
-            try {
-                return createData();
-            } catch (Exception e) {
-                this.lastError = e;
-                cancel(true);
-                return null;
-            }
-        }
-
-        private List<String> createData() throws IOException {
-            Trip trip = getCurrentTrip();
-            Spreadsheet spreadsheet = new Spreadsheet();
-            SpreadsheetProperties properties = new SpreadsheetProperties();
-            Sheet sheet = new Sheet();
-            sheet.setData(createSheetData(trip));
-
-            properties.setTitle(Utils.getTripTitle(MainActivity.this, trip));
-            spreadsheet.setProperties(properties);
-
-            spreadsheet.setSheets(Collections.singletonList(sheet));
-
-            Sheets.Spreadsheets.Create create = this.service.spreadsheets().create(spreadsheet);
-            create.execute();
-
-            return null;
-        }
-
-        private List<GridData> createSheetData(Trip trip) {
-            RowData header = new RowData();
-            header.setValues(createHeader());
-
-            GridData gridData = new GridData();
-            List<RowData> rows = new ArrayList<>();
-            rows.add(header);
-            for (Integer day : trip.getItemMap().keySet()) {
-                rows.addAll(createRows(trip, day));
-            }
-
-            gridData.setRowData(rows);
-
-            return Collections.singletonList(gridData);
-        }
-
-        private List<CellData> createHeader() {
-            List<CellData> list = new ArrayList<>();
-            String[] headers = {"Day", "Type", "Desc", "Pay Type", "Amount"};
-            for (String h : headers) {
-                list.add(new CellData()
-                        .setUserEnteredValue(new ExtendedValue().setStringValue(h))
-                        .setUserEnteredFormat(new CellFormat()
-                                .setHorizontalAlignment("RIGHT")
-                                .setTextFormat(new TextFormat().setBold(true))));
-            }
-            return list;
-        }
-
-        private List<RowData> createRows(Trip trip, Integer day) {
-            List<Item> items = trip.getItemMap().get(day);
-            List<RowData> rows = new ArrayList<>();
-            for (Item item : items) {
-                RowData row = new RowData();
-                List<CellData> cells = new ArrayList<>();
-
-                cells.add(createCell(day + 1));
-                cells.add(createCell(item.getType()));
-                cells.add(createCell(item.getDetails()));
-                cells.add(createCell(item.getPayType()));
-                cells.add(createCell(item.getAmount()));
-
-                row.setValues(cells);
-                rows.add(row);
-            }
-
-            return rows;
-        }
-
-        private CellData createCell(String data) {
-            return new CellData()
-                    .setUserEnteredValue(new ExtendedValue().setStringValue(data))
-                    .setUserEnteredFormat(new CellFormat()
-                            .setHorizontalAlignment("RIGHT"));
-        }
-
-        private CellData createCell(Number data) {
-            return new CellData()
-                    .setUserEnteredValue(new ExtendedValue().setNumberValue(data.doubleValue()))
-                    .setUserEnteredFormat(new CellFormat()
-                            .setHorizontalAlignment("RIGHT"));
-        }
-
-        @Override
-        protected void onPreExecute() {
-            MainActivity.this.progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(List<String> output) {
-            MainActivity.this.progressDialog.hide();
-            showMessageDialog(getResources().getString(R.string.msg_google_sheet_saved));
-        }
-
-        @Override
-        protected void onCancelled() {
-            MainActivity.this.progressDialog.hide();
-            if (this.lastError != null) {
-
-                if (this.lastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            ((GooglePlayServicesAvailabilityIOException) this.lastError)
-                                    .getConnectionStatusCode());
-                } else if (this.lastError instanceof UserRecoverableAuthIOException) {
-                    startActivityForResult(
-                            ((UserRecoverableAuthIOException) this.lastError).getIntent(),
-                            REQUEST_AUTHORIZATION);
-                } else {
-                    this.lastError.printStackTrace();
-                    showErrorDialog(getResources().getString(R.string.error_save_google_drive));
+                // add all items
+                for (List<Item> list : trip.getItemMap().values()) {
+                    for (Item item : list) {
+                        this.dbHelper.saveItem(id, item);
+                    }
                 }
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, EditFragment.newInstance(trip));
+                transaction.addToBackStack(null);
+
+                transaction.commit();
             } else {
-                showErrorDialog(getResources().getString(R.string.error_save_cancelled));
+                showErrorDialog(getResources().getString(R.string.error_create_trip));
             }
         }
     }

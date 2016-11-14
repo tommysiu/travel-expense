@@ -34,6 +34,14 @@
         android:layout_marginBottom="24dp"
         android:text="@string/button_all_trip"/>
 
+    <Button
+        android:id="@+id/btnImportTrip"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:text="@string/button_import_trip"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -92,6 +92,14 @@ public class MainFragment extends Fragment {
         builder.create().show();
     }
 
+    @OnClick(R.id.btnImportTrip)
+    public void importTrip() {
+        if (this.mListener != null) {
+            this.mListener.onReadFromCloud();
+        }
+    }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
