@@ -1,7 +1,9 @@
 package taijigoldfish.travelexpense;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,5 +71,21 @@ public class EditFragment extends AbstractFragment {
         if (this.mListener != null) {
             this.mListener.onSaveToCloud();
         }
+    }
+
+    @OnClick(R.id.btnDelete)
+    public void deleteTrip() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity())
+                .setTitle("Delete the current trip?")
+                .setPositiveButton(R.string.button_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (EditFragment.this.mListener != null) {
+                            EditFragment.this.mListener.onDeleteTrip(EditFragment.this.getTrip().getId());
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+        builder.create().show();
     }
 }

@@ -286,6 +286,12 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
     }
 
     @Override
+    public void onDeleteTrip(long tripId) {
+        this.dbHelper.deleteTrip(tripId);
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
     public void onInputDetails() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 

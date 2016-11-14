@@ -39,6 +39,7 @@
     <string name="button_input">Input</string>
     <string name="button_summary">Summary</string>
     <string name="button_submit_cloud">Submit to Google Drive</string>
+    <string name="button_delete_trip">Delete</string>
 
     <!-- day screen -->
     <string name="button_input_details">Input Details</string>

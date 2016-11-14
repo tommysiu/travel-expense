@@ -83,7 +83,17 @@ public class DbHelper extends SQLiteOpenHelper {
         return db.insert(DbContract.TripEntry.TABLE_NAME, null, cv);
     }
 
-    public long saveItem(Long tripId, Item item) {
+    public int deleteTrip(long tripId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(DbContract.ItemEntry.TABLE_NAME, DbContract.ItemEntry.COLUMN_NAME_TRIP_ID + "=?",
+                new String[]{"" + tripId});
+
+        return db.delete(DbContract.TripEntry.TABLE_NAME, BaseColumns._ID + "=?",
+                new String[]{"" + tripId});
+    }
+
+    public long saveItem(long tripId, Item item) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();

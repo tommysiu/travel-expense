@@ -23,7 +23,7 @@
     <Space
         android:id="@+id/space"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/txtTripTitle"
         android:layout_centerHorizontal="true" />
 
@@ -57,5 +57,14 @@
         android:layout_marginBottom="12dp"
         android:text="@string/button_submit_cloud" />
 
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSubmit"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:text="@string/button_delete_trip"/>
 
 </RelativeLayout>
