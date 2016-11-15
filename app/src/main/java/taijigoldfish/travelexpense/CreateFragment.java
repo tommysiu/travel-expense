@@ -1,17 +1,23 @@
 package taijigoldfish.travelexpense;
 
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,11 +34,11 @@ import taijigoldfish.travelexpense.model.Trip;
 public class CreateFragment extends Fragment {
     private static final String TAG = CreateFragment.class.getName();
 
-    @BindView(R.id.editItemType)
+    @BindView(R.id.editDestination)
     EditText editDestination;
 
-    @BindView(R.id.editItemDetails)
-    EditText editStartDate;
+    @BindView(R.id.editStartDate)
+    TextView editStartDate;
 
     @BindView(R.id.editEndDate)
     EditText editEndDate;
@@ -109,5 +115,49 @@ public class CreateFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
+    }
+
+    @OnClick(R.id.editStartDate)
+    public void inputStartDate() {
+        DatePickerFragment fragment = new DatePickerFragment();
+        fragment.setListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                CreateFragment.this.editStartDate.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
+            }
+        });
+        fragment.show(getFragmentManager(), "DatePickerFragment");
+    }
+
+    @OnClick(R.id.editEndDate)
+    public void inputEndDate() {
+        DatePickerFragment fragment = new DatePickerFragment();
+        fragment.setListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                CreateFragment.this.editEndDate.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
+            }
+        });
+        fragment.show(getFragmentManager(), "DatePickerFragment");
+    }
+
+    public static class DatePickerFragment extends DialogFragment {
+
+        private DatePickerDialog.OnDateSetListener listener;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this.listener, year, month, day);
+        }
+
+        public void setListener(DatePickerDialog.OnDateSetListener listener) {
+            this.listener = listener;
+        }
     }
 }

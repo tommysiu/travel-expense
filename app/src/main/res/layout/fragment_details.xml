@@ -59,7 +59,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="12dp"
-        android:labelFor="@id/editItemDetails"
+        android:labelFor="@+id/editItemDetails"
         android:text="@string/txt_item_details"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
