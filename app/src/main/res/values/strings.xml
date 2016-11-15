@@ -14,6 +14,7 @@
     <string name="error_save_google_drive">Fail to save to Google Drive</string>
     <string name="error_read_google_drive">Fail to read Google Drive file</string>
     <string name="error_save_cancelled">Request cancelled</string>
+    <string name="msg_connect_google_drive">Connecting to Google Drive...</string>
     <string name="msg_google_sheet_saved">Trip has been exported to Google Drive successfully</string>
     <string name="msg_google_sheet_imported">Trip has been imported from Google Drive successfully</string>
 

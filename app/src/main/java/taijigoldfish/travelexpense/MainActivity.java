@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener,
                 .setBackOff(new ExponentialBackOff());
 
         this.progressDialog = new ProgressDialog(this);
-        this.progressDialog.setMessage("Saving to Google Drive...");
+        this.progressDialog.setMessage(getResources().getString(R.string.msg_connect_google_drive));
 
         // if we're being restored from a previous state,
         // then we don't need to do anything and should return or else
