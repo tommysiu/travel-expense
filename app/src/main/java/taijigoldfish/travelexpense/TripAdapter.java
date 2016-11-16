@@ -25,6 +25,7 @@ public class TripAdapter extends ArrayAdapter<Trip> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Trip trip = getItem(position);
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.list_trip, parent, false);
@@ -35,6 +36,8 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         txtStartDate.setText(Utils.formatDate(trip.getStartDate()));
 
         if (trip.getId() == this.currentTripId) {
+            txtDestination.setText(getContext().getResources()
+                    .getString(R.string.txt_list_destination, txtDestination.getText()));
             txtDestination.setTypeface(null, Typeface.BOLD);
             txtDestination.setTextColor(Color.BLUE);
             txtStartDate.setTypeface(null, Typeface.BOLD);

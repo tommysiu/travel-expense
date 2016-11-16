@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Comparator;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taijigoldfish.travelexpense.model.Trip;
@@ -76,6 +78,14 @@ public class MainFragment extends Fragment {
     public void showTripList() {
         final TripAdapter adapter = new TripAdapter(
                 this.getContext(), this.dbHelper.getTripList(), Utils.getCurrentTripId(getActivity()));
+
+        // sort trips by start date (desc)
+        adapter.sort(new Comparator<Trip>() {
+            @Override
+            public int compare(Trip o1, Trip o2) {
+                return o2.getStartDate().compareTo(o1.getStartDate());
+            }
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity())
                 .setTitle(R.string.title_trip_list)

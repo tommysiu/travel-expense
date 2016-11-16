@@ -27,6 +27,7 @@
     <!-- trip list dialog -->
     <string name="title_trip_list">Your Trips</string>
     <string name="button_select_active">Set As Current</string>
+    <string name="txt_list_destination">%1$s (current)</string>
 
     <!-- new trip screen -->
     <string name="txt_destination">Destination</string>
@@ -70,8 +71,6 @@
     <!-- summary screen -->
     <string name="txt_amount">%1$.2f (%2$s)</string>
     <string name="switch_grouping">Grouping</string>
-
-    <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

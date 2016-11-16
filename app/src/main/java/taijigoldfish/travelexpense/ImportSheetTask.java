@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import taijigoldfish.travelexpense.model.Item;
@@ -80,9 +79,21 @@ public class ImportSheetTask extends AsyncTask<String, Void, Trip> {
             Log.e(TAG, "No data found");
             throw new Exception("Fail to read data");
         } else {
-            ListIterator<List<Object>> it = values.listIterator(6);
-            while (it.hasNext()) {
-                List<Object> row = it.next();
+
+            boolean foundDayHeader = false;
+            for (List<Object> row : values) {
+
+                if (!foundDayHeader) {
+                    if (row.size() > 0 && row.get(0).toString().toUpperCase(Locale.ENGLISH).equals("DAY")) {
+                        foundDayHeader = true;
+                    }
+                    continue;
+                }
+
+                if (row.size() == 0 || row.get(0) == null || row.get(0).toString().trim().equals("")) {
+                    break;
+                }
+
                 Item item = new Item();
                 item.setTripId(trip.getId());
                 item.setDay(Integer.parseInt(row.get(0).toString()) - 1);
