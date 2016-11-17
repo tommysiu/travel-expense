@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import taijigoldfish.travelexpense.model.Item;
@@ -39,7 +40,7 @@ public class ImportSheetTask extends AsyncTask<String, Void, Trip> {
     @Override
     protected Trip doInBackground(String... params) {
         try {
-            return readData(params[0]);
+            return readSheet(params[0]);
         } catch (Exception e) {
             this.lastError = e;
             cancel(true);
@@ -47,49 +48,64 @@ public class ImportSheetTask extends AsyncTask<String, Void, Trip> {
         return null;
     }
 
-    private Trip readData(String sheetId) throws Exception {
+    private Trip readSheet(String sheetId) throws Exception {
         Trip trip = new Trip();
 
-        readSummary(trip, sheetId);
-        readData(trip, sheetId);
+        readGeneralInfo(trip, sheetId);
+        readExpense(trip, sheetId);
 
         return trip;
     }
 
-    private void readSummary(Trip trip, String sheetId) throws Exception {
+    private void readGeneralInfo(Trip trip, String sheetId) throws Exception {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         List<List<Object>> values = this.service.spreadsheets()
-                .values().get(sheetId, "A1:B5").execute().getValues();
+                .values().get(sheetId, "General!A1:B5").execute().getValues();
         if (values == null || values.size() == 0) {
-            Log.e(TAG, "No summary found");
-            throw new Exception("Fail to read summary");
+            Log.e(TAG, "No general info found");
+            throw new Exception("Fail to read general info");
         } else {
-            trip.setDestination(values.get(0).get(1).toString());
-            trip.setStartDate(dateFormat.parse(values.get(1).get(1).toString()));
-            trip.setEndDate(dateFormat.parse(values.get(2).get(1).toString()));
-            trip.setCurrency(values.get(3).get(1).toString());
-            trip.setTotalCash(Float.parseFloat(values.get(4).get(1).toString()));
+            if (checkGeneralHeaders(values)) {
+                trip.setDestination(values.get(0).get(1).toString());
+                trip.setStartDate(dateFormat.parse(values.get(1).get(1).toString()));
+                trip.setEndDate(dateFormat.parse(values.get(2).get(1).toString()));
+                trip.setCurrency(values.get(3).get(1).toString());
+                trip.setTotalCash(Float.parseFloat(values.get(4).get(1).toString()));
+            } else {
+                Log.e(TAG, "No expense data found");
+                throw new Exception("Fail to read expense data");
+            }
         }
     }
 
-    private void readData(Trip trip, String sheetId) throws Exception {
+    private boolean checkGeneralHeaders(List<List<Object>> values) {
+        return checkHeader(values.get(0).get(0), "Destination")
+                && checkHeader(values.get(1).get(0), "Start Date")
+                && checkHeader(values.get(2).get(0), "End Date")
+                && checkHeader(values.get(3).get(0), "Currency")
+                && checkHeader(values.get(4).get(0), "Total Cash");
+    }
+
+    private boolean checkHeader(Object header, String expected) {
+        return header.toString().trim().equalsIgnoreCase(expected);
+    }
+
+    private void readExpense(Trip trip, String sheetId) throws Exception {
         List<List<Object>> values = this.service.spreadsheets()
-                .values().get(sheetId, "A:E").execute().getValues();
+                .values().get(sheetId, "Expense!A:E").execute().getValues();
         if (values == null || values.size() == 0) {
             Log.e(TAG, "No data found");
             throw new Exception("Fail to read data");
         } else {
 
-            boolean foundDayHeader = false;
-            for (List<Object> row : values) {
+            if (!checkExpenseHeaders(values)) {
+                Log.e(TAG, "Error to read data headers");
+                throw new Exception("Fail to read data headers");
+            }
 
-                if (!foundDayHeader) {
-                    if (row.size() > 0 && row.get(0).toString().toUpperCase(Locale.ENGLISH).equals("DAY")) {
-                        foundDayHeader = true;
-                    }
-                    continue;
-                }
-
+            ListIterator<List<Object>> it = values.listIterator(1);
+            while (it.hasNext()) {
+                List<Object> row = it.next();
                 if (row.size() == 0 || row.get(0) == null || row.get(0).toString().trim().equals("")) {
                     break;
                 }
@@ -105,6 +121,14 @@ public class ImportSheetTask extends AsyncTask<String, Void, Trip> {
                 trip.addItem(item);
             }
         }
+    }
+
+    private boolean checkExpenseHeaders(List<List<Object>> values) {
+        return checkHeader(values.get(0).get(0), "Day")
+                && checkHeader(values.get(0).get(1), "Type")
+                && checkHeader(values.get(0).get(2), "Desc")
+                && checkHeader(values.get(0).get(3), "Pay Type")
+                && checkHeader(values.get(0).get(4), "Amount");
     }
 
     @Override
