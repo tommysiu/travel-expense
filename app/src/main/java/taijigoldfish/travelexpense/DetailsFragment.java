@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -48,7 +47,7 @@ public class DetailsFragment extends AbstractFragment {
     EditText editItemAmount;
 
     @BindView(R.id.btnDelete)
-    Button btnDelete;
+    View btnDelete;
 
     private Item item = null;
 
@@ -121,15 +120,15 @@ public class DetailsFragment extends AbstractFragment {
         // item type choice
         ArrayAdapter<CharSequence> itemTypeAdapter =
                 ArrayAdapter.createFromResource(
-                        this.getActivity(), R.array.item_type_array, android.R.layout.simple_spinner_item);
-        itemTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        this.getActivity(), R.array.item_type_array, R.layout.custom_spinner_item);
+        itemTypeAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         this.itemTypeSpinner.setAdapter(itemTypeAdapter);
 
         // pay type choice
         ArrayAdapter<CharSequence> payTypeAdapter =
                 ArrayAdapter.createFromResource(
-                        this.getActivity(), R.array.pay_type_array, android.R.layout.simple_spinner_item);
-        payTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        this.getActivity(), R.array.pay_type_array, R.layout.custom_spinner_item);
+        payTypeAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         this.payTypeSpinner.setAdapter(payTypeAdapter);
 
 

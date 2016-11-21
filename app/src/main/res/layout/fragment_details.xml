@@ -1,5 +1,6 @@
 <!-- The main content view -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/myToolbar">
@@ -16,14 +17,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="95dp"
+        android:layout_marginTop="60dp"
         android:text="@string/txt_default_title"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <Space
         android:id="@+id/space"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/txtTripTitle"
         android:layout_centerHorizontal="true"/>
 
@@ -35,7 +36,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="36dp"
         android:background="@drawable/selector_spinner"
         android:textAlignment="center"/>
 
@@ -47,6 +48,7 @@
         android:layout_below="@id/daySpinner"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
+        android:layout_marginTop="12dp"
         android:text="@string/txt_item_type"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -58,7 +60,7 @@
         android:layout_below="@+id/txtItemType"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:labelFor="@+id/editItemDetails"
         android:text="@string/txt_item_details"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
@@ -71,7 +73,7 @@
         android:layout_below="@+id/txtItemDesc"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:text="@string/txt_item_pay_type"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -83,60 +85,56 @@
         android:layout_below="@+id/txtPayType"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:labelFor="@id/editItemAmount"
         android:text="@string/txt_item_amount"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <EditText
-        android:id="@+id/editItemType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/txtItemType"
-        android:layout_marginEnd="24dp"
-        android:layout_toEndOf="@+id/center"
-        android:inputType="text"/>
-
     <Spinner
         android:id="@+id/itemTypeSpinner"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/txtItemType"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/txtItemType"
-        android:layout_below="@id/space"
-        android:layout_marginEnd="24dp"
-        android:layout_toEndOf="@+id/center"/>
+        android:layout_marginEnd="@dimen/details_horizontal_margin"
+        android:layout_toEndOf="@+id/txtPayType"
+        android:background="@drawable/type_spinner"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <EditText
+    <com.beardedhen.androidbootstrap.BootstrapEditText
         android:id="@+id/editItemDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtItemDesc"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/itemTypeSpinner"
-        android:layout_alignTop="@+id/txtItemDesc"
-        android:layout_marginEnd="24dp"
-        android:inputType="text"/>
+        android:layout_marginEnd="@dimen/details_horizontal_margin"
+        android:inputType="text"
+        app:bootstrapBrand="info"
+        app:bootstrapSize="xl"/>
 
     <Spinner
         android:id="@+id/payTypeSpinner"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtPayType"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/editItemDetails"
-        android:layout_alignTop="@+id/txtPayType"
-        android:layout_below="@id/space"
-        android:layout_marginEnd="24dp"/>
+        android:layout_alignStart="@+id/itemTypeSpinner"
+        android:layout_marginEnd="@dimen/details_horizontal_margin"
+        android:background="@drawable/type_spinner"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <EditText
+    <com.beardedhen.androidbootstrap.BootstrapEditText
         android:id="@+id/editItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtItemAmount"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/payTypeSpinner"
-        android:layout_alignTop="@+id/txtItemAmount"
-        android:layout_marginEnd="24dp"
-        android:inputType="numberDecimal"/>
+        android:layout_alignStart="@+id/itemTypeSpinner"
+        android:layout_marginEnd="@dimen/details_horizontal_margin"
+        android:inputType="numberDecimal"
+        app:bootstrapBrand="info"
+        app:bootstrapSize="xl"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -145,21 +143,35 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="12dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="60dp"
         android:orientation="horizontal">
 
-        <Button
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/btnSave"
             android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/button_save"/>
+            app:bootstrapBrand="success"
+            app:bootstrapSize="xl"
+            app:bootstrapText="@string/button_save"
+            app:buttonMode="regular"
+            app:roundedCorners="true"
+            app:showOutline="false"/>
 
-        <Button
+        <Space
+            android:layout_width="24dp"
+            android:layout_height="0dp"/>
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/btnDelete"
             android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/button_delete"/>
+            app:bootstrapBrand="danger"
+            app:bootstrapSize="xl"
+            app:bootstrapText="@string/button_delete"
+            app:buttonMode="regular"
+            app:roundedCorners="true"
+            app:showOutline="false"/>
     </LinearLayout>
 </RelativeLayout>

@@ -19,10 +19,10 @@
     <string name="msg_google_sheet_imported">Trip has been imported from Google Drive successfully</string>
 
     <!-- main screen -->
-    <string name="button_new_trip">New Trip</string>
-    <string name="button_current_trip">Current Trip</string>
-    <string name="button_all_trip">List of Trips</string>
-    <string name="button_import_trip">Import from Drive</string>
+    <string name="button_new_trip">{fa_plus} New Trip</string>
+    <string name="button_current_trip">{fa_edit} Current Trip</string>
+    <string name="button_all_trip">{fa_list} List of Trips</string>
+    <string name="button_import_trip">{fa_cloud_download} Import from Google Drive</string>
 
     <!-- trip list dialog -->
     <string name="title_trip_list">Your Trips</string>
@@ -38,33 +38,45 @@
 
     <!-- edit trip screen -->
     <string name="txt_trip_title">%1$d-Days %2$s Trip</string>
-    <string name="button_input">Input</string>
-    <string name="button_summary">Summary</string>
-    <string name="button_submit_cloud">Submit to Google Drive</string>
-    <string name="button_delete_trip">Delete</string>
+    <string name="button_input">{fa_edit} Input</string>
+    <string name="button_summary">{fa_list} Summary</string>
+    <string name="button_submit_cloud">{fa_cloud_upload} Submit to Google Drive</string>
+    <string name="button_delete_trip">{fa_trash} Delete</string>
 
     <!-- day screen -->
     <string name="button_input_details">Input Details</string>
 
     <!-- details screen -->
-    <string name="button_save">Save</string>
-    <string name="button_delete">Delete</string>
+    <string name="button_save">{fa_save} Save</string>
+    <string name="button_delete">{fa_trash} Delete</string>
     <string name="txt_item_title">%1$s Trip (Day %2$d)</string>
     <string name="txt_item_type">Type</string>
     <string name="txt_item_details">Details</string>
     <string name="txt_item_pay_type">Cash/Visa</string>
     <string name="txt_item_amount">Expense</string>
-    <string-array name="item_type_array">
+    <string name="default_item_type">Souvenir</string>
+    <array name="item_type_array">
         <item>Souvenir</item>
         <item>Entrance</item>
         <item>Food</item>
         <item>Transport</item>
         <item>Planned</item>
         <item>Unplanned</item>
-    </string-array>
+    </array>
+    <string name="default_pay_type">Cash</string>
     <string-array name="pay_type_array">
         <item>Cash</item>
         <item>Visa</item>
+    </string-array>
+    <string name="default_currency">TWD</string>
+    <string-array name="currency_array">
+        <item>TWD</item>
+        <item>JPY</item>
+        <item>GBP</item>
+        <item>EUR</item>
+        <item>USD</item>
+        <item>KRW</item>
+        <item>HKD</item>
     </string-array>
     <string name="txt_confirm_delete">Confirm Delete?</string>
 
